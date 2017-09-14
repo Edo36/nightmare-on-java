@@ -42,7 +42,7 @@ public class IntroScene implements Screen {
 
   private OrthographicCamera mainCamera;
   private Viewport gameViewport;
-  private Texture background;
+  private Texture backgroundImage;
 
 
   public IntroScene (GameMain game) {
@@ -55,7 +55,7 @@ public class IntroScene implements Screen {
     gameViewport = new StretchViewport(Settings.width, Settings.height, mainCamera);
 
     // Setting static background.
-    background = new Texture("Backgrounds/Background 1.png");
+    backgroundImage = new Texture("Backgrounds/Background 1.png");
   }
 
   @Override
@@ -67,13 +67,16 @@ public class IntroScene implements Screen {
 
   @Override
   public void render(float delta) {
+    // Set background colors.
     Gdx.gl.glClearColor(0, 0,0,1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+    // Start the rendering.
     game.getBatch().begin();
-    game.getBatch().draw(background, 0,0);
+    game.getBatch().draw(backgroundImage, 0,0);
     game.getBatch().end();
 
+    // Wait for key press.
     if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
       music.stop();
       game.setScreen(new GameScene(game));
