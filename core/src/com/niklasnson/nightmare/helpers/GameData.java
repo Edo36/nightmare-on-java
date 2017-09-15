@@ -27,7 +27,7 @@ package com.niklasnson.nightmare.helpers;
 public class GameData {
 
   private int highscore;
-  private boolean musicOn;
+    private boolean musicOn;
 
   public int getHighscore() {
     return highscore;

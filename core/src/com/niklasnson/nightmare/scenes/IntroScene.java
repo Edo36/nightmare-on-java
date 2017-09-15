@@ -36,9 +36,11 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.niklasnson.nightmare.GameMain;
 import com.niklasnson.nightmare.helpers.GameData;
+import com.niklasnson.nightmare.helpers.GameManager;
 import com.niklasnson.nightmare.helpers.Settings;
 
 public class IntroScene implements Screen {
+
   private GameMain game;
   private Music music;
 
@@ -65,7 +67,9 @@ public class IntroScene implements Screen {
   public void show() {
     music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/intro-background.mp3"));
     music.setLooping(true);
-    //music.play();
+    //if (GameData.isMusicOn()) {
+    //  music.play();
+    //}
   }
 
   @Override
