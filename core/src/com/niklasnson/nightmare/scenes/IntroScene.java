@@ -31,9 +31,11 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.niklasnson.nightmare.GameMain;
+import com.niklasnson.nightmare.helpers.GameData;
 import com.niklasnson.nightmare.helpers.Settings;
 
 public class IntroScene implements Screen {
@@ -43,6 +45,7 @@ public class IntroScene implements Screen {
   private OrthographicCamera mainCamera;
   private Viewport gameViewport;
   private Texture backgroundImage;
+
 
 
   public IntroScene (GameMain game) {
@@ -62,7 +65,7 @@ public class IntroScene implements Screen {
   public void show() {
     music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/intro-background.mp3"));
     music.setLooping(true);
-    music.play();
+    //music.play();
   }
 
   @Override
@@ -73,7 +76,7 @@ public class IntroScene implements Screen {
 
     // Start the rendering.
     game.getBatch().begin();
-    game.getBatch().draw(backgroundImage, 0,0);
+    game.getBatch().draw(backgroundImage, 0,0, Settings.width, Settings.height);
     game.getBatch().end();
 
     // Wait for key press.
@@ -107,5 +110,6 @@ public class IntroScene implements Screen {
   @Override
   public void dispose() {
     music.dispose();
+    backgroundImage.dispose();
   }
 }
