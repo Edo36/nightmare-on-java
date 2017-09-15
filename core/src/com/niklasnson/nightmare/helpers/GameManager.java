@@ -43,7 +43,7 @@ public class GameManager {
       gameData = new GameData();
 
       gameData.setHighscore(0);
-      gameData.setMusicOn(true);
+      gameData.setMusicOn(false);
 
       saveData();
     } else {
