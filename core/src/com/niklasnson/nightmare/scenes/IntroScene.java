@@ -29,38 +29,30 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.niklasnson.nightmare.GameMain;
-import com.niklasnson.nightmare.helpers.GameData;
-import com.niklasnson.nightmare.helpers.GameManager;
+import com.niklasnson.nightmare.Player.Player;
 import com.niklasnson.nightmare.helpers.Settings;
+
+import java.util.ArrayList;
 
 public class IntroScene implements Screen {
 
   private GameMain game;
   private Music music;
 
-  private OrthographicCamera mainCamera;
-  private Viewport gameViewport;
   private Texture backgroundImage;
-
-
+  private Player player;
 
   public IntroScene (GameMain game) {
     this.game = game;
 
-    // Setting up the camera.
-    mainCamera = new OrthographicCamera();
-    mainCamera.setToOrtho(false, Settings.width, Settings.height);
-    mainCamera.position.set(Settings.width / 2f, Settings.height / 2f, 0);
-    gameViewport = new StretchViewport(Settings.width, Settings.height, mainCamera);
-
-    // Setting static background.
+     // Setting static background.
     backgroundImage = new Texture("Backgrounds/Background 1.png");
+    // Initialize a player.
+    player = new Player((Settings.width /2)-50 , (Settings.height /2)-35 );
+
   }
 
   @Override
@@ -68,7 +60,7 @@ public class IntroScene implements Screen {
     music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/intro-background.mp3"));
     music.setLooping(true);
     //if (GameData.isMusicOn()) {
-    //  music.play();
+    //music.play();
     //}
   }
 
@@ -81,12 +73,28 @@ public class IntroScene implements Screen {
     // Start the rendering.
     game.getBatch().begin();
     game.getBatch().draw(backgroundImage, 0,0, Settings.width, Settings.height);
+    player.draw(game.getBatch());
     game.getBatch().end();
+    player.Idle();
 
-    // Wait for key press.
+    if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+      System.out.println("DOWN");
+    }
+
+    if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+      System.out.println("UP");
+    }
+
+    if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+      player.Run();
+    }
+
+    if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+      player.Run();
+    }
+
     if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-      music.stop();
-      game.setScreen(new GameScene(game));
+      player.Jump();
     }
 
   }
