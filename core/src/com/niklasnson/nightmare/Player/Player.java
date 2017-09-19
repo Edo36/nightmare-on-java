@@ -33,34 +33,31 @@ import java.util.ArrayList;
 public class Player extends Sprite{
 
   private ArrayList<Texture> playerAnimations = new ArrayList<Texture>();
-  private float x;
-  private float y;
 
-  private int posIdle;
-  private int posWalking;
-  private int posRunning;
-  private int posJumping;
+  private int currentFrameInIdle;
+  private int currentFrameInWalking;
+  private int currentFrameInRunning;
+  private int currentFrameInJumping;
 
-  private boolean isRunning;
-  private boolean isIdle;
-  private boolean isJumping;
-
-  public Player(String fileName, float x, float y) {
-    super(new Texture("Player/" + fileName + ".png"));
-    setSize(80, 80);
-    setPosition(x-getWidth() / 2, y -getHeight() / 2);
-  }
+  private boolean playerRunning;
+  private boolean playerIdle;
+  private boolean playerJumping;
 
   public Player (float x, float y) {
-    this.posIdle = 0;
-    this.posWalking = 15;
-    this.posRunning = 36;
-    this.posJumping = 37;
-    this.isIdle = true;
-    this.isRunning = false;
-    this.isJumping = false;
+    // Frame counters
+    this.currentFrameInIdle = 0;
+    this.currentFrameInWalking = 15;
+    this.currentFrameInRunning = 36;
+    this.currentFrameInJumping = 37;
+    // Player is currently
+    this.playerIdle = true;
+    this.playerRunning = false;
+    this.playerJumping = false;
+    // Sprite size
     setSize(80, 80);
+    // Current position on screen
     setPosition(x, y);
+    // Load all sprites
     initializeAnimations();
   }
 
@@ -83,59 +80,68 @@ public class Player extends Sprite{
   }
 
   public void drawIdle (SpriteBatch batch) {
-    batch.draw(playerAnimations.get(posIdle), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    posIdle++;
-    if (posIdle > 15) {
-      posIdle = 0;
+    batch.draw(playerAnimations.get(currentFrameInIdle), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    currentFrameInIdle++;
+    if (currentFrameInIdle > 15) {
+      currentFrameInIdle = 0;
     }
   }
 
   public void drawWalking (SpriteBatch batch) {
-    batch.draw(playerAnimations.get(posWalking), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    posWalking++;
-    if (posWalking > 35) {
-      posWalking = 15;
+    batch.draw(playerAnimations.get(currentFrameInWalking), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    currentFrameInWalking++;
+    if (currentFrameInWalking > 35) {
+      currentFrameInWalking = 15;
     }
   }
 
   public void drawRunning (SpriteBatch batch) {
-    batch.draw(playerAnimations.get(posRunning), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    posRunning++;
-    if (posRunning > 55) {
-      posRunning = 36;
+    batch.draw(playerAnimations.get(currentFrameInRunning), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    currentFrameInRunning++;
+    if (currentFrameInRunning > 55) {
+      currentFrameInRunning = 36;
     }
   }
 
   public void drawJumping (SpriteBatch batch) {
-    batch.draw(playerAnimations.get(posJumping), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    batch.draw(playerAnimations.get(currentFrameInJumping), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    setPosition(this.getX(), this.getY() + 1);
+    currentFrameInJumping++;
+    if (currentFrameInJumping > 85) {
+      currentFrameInJumping = 37;
+    }
   }
 
   public void draw (SpriteBatch batch) {
-    if (isRunning) {
+    if (playerRunning) {
       drawRunning(batch);
     }
 
-    if (isIdle) {
+    if (playerIdle) {
       drawIdle(batch);
+    }
+
+    if (playerJumping) {
+      drawJumping(batch);
     }
   }
 
   public void Run () {
-    isRunning = true;
-    isIdle = false;
-    isJumping = false;
+    playerRunning = true;
+    playerIdle = false;
+    playerJumping = false;
   }
 
   public void Idle () {
-    isIdle = true;
-    isRunning = false;
-    isJumping = false;
+    playerIdle = true;
+    playerRunning = false;
+    playerJumping = false;
   }
 
   public void Jump () {
-    isJumping = true;
-    isIdle = false;
-    isRunning = false;
+    playerJumping = true;
+    playerIdle = false;
+    playerRunning = false;
   }
 
 }

@@ -78,11 +78,10 @@ public class IntroScene implements Screen {
     player.Idle();
 
     if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
-      System.out.println("DOWN");
     }
 
     if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
-      System.out.println("UP");
+      player.Jump();
     }
 
     if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
