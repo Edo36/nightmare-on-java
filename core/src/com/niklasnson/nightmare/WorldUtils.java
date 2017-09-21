@@ -22,22 +22,32 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.desktop;
+package com.niklasnson.nightmare;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.niklasnson.nightmare.Constants;
-import com.niklasnson.nightmare.GameMain;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.World;
 
-public class DesktopLauncher {
-	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+public class WorldUtils {
 
-		// Config variables from Constants class.
-		config.width = Constants.width;
-		config.height = Constants.height;
-		config.title = Constants.title;
+  public static final Vector2 gravity = new Vector2(0, -9.8f);
 
-		new LwjglApplication(new GameMain(), config);
-	}
+  public static World createWorld () {
+    return new World(gravity, true);
+  }
+
+  public static Body createGround (World world) {
+    BodyDef bodyDef = new BodyDef();
+    bodyDef.position.set(new Vector2(Constants.ground_x, Constants.ground_y));
+    Body body = world.createBody(bodyDef);
+    PolygonShape shape = new PolygonShape();
+    shape.setAsBox(Constants.ground_width / 2, Constants.ground_height / 2);
+    body.createFixture(shape, Constants.ground_density);
+    shape.dispose();
+    return body;
+
+  }
+
 }

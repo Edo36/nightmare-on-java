@@ -22,22 +22,43 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.desktop;
+package com.niklasnson.nightmare.Screens;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.niklasnson.nightmare.Constants;
-import com.niklasnson.nightmare.GameMain;
+import com.badlogic.gdx.Screen;
 
-public class DesktopLauncher {
-	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+public class GameScreen implements Screen {
+  @Override
+  public void show() {
 
-		// Config variables from Constants class.
-		config.width = Constants.width;
-		config.height = Constants.height;
-		config.title = Constants.title;
+  }
 
-		new LwjglApplication(new GameMain(), config);
-	}
+  @Override
+  public void render(float delta) {
+
+  }
+
+  @Override
+  public void resize(int width, int height) {
+
+  }
+
+  @Override
+  public void pause() {
+
+  }
+
+  @Override
+  public void resume() {
+
+  }
+
+  @Override
+  public void hide() {
+
+  }
+
+  @Override
+  public void dispose() {
+
+  }
 }

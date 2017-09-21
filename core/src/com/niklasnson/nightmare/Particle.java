@@ -22,22 +22,7 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.desktop;
+package com.niklasnson.nightmare;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.niklasnson.nightmare.Constants;
-import com.niklasnson.nightmare.GameMain;
-
-public class DesktopLauncher {
-	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-
-		// Config variables from Constants class.
-		config.width = Constants.width;
-		config.height = Constants.height;
-		config.title = Constants.title;
-
-		new LwjglApplication(new GameMain(), config);
-	}
+public class Particle {
 }

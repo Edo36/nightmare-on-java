@@ -22,13 +22,7 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.helpers;
+package com.niklasnson.nightmare;
 
-public class Settings {
-
-  // Game screen settings
-  public static final int width = 800;
-  public static final int height = 480;
-  public static final String title = "My nightmare, it all stems from childhood";
-
+public class MaleZombie {
 }

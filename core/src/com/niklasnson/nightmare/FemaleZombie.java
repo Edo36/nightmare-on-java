@@ -24,24 +24,47 @@
 
 package com.niklasnson.nightmare;
 
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.niklasnson.nightmare.Screens.MainMenuScreen;
-import com.niklasnson.nightmare.helpers.GameManager;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 
-public class GameMain extends Game {
-	private SpriteBatch batch;
+import java.util.ArrayList;
 
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-    GameManager.getInstance().initializeGameData();
-    Assets.initialize();
-		setScreen(new MainMenuScreen(this));
-	}
+public class FemaleZombie extends Enemy {
 
-	@Override
-	public void render () { super.render(); }
+  private World world;
+  private Body body;
 
-  public SpriteBatch getBatch () { return this.batch; }
+  private int animationAttackStart = 0;
+  private int animationDeadStart = 0;
+  private int animationIdleStart = 0;
+  private int animationWalkStart = 0;
+
+  private int animationAttackLength = 8;
+  private int animationDeadLenght = 12;
+  private int animationIdleLength = 15;
+  private int animationWalkLength = 10;
+
+  private int animationCurrentFrame = 0;
+  private int animationSpeed = 0;
+
+  public FemaleZombie (World world, float x, float y) {
+    this.world = world;
+    setSize(Constants.female_zombie_width, Constants.female_zombie_height);
+    setPosition(x, y);
+  }
+
+  @Override
+  public void draw(SpriteBatch batch) {
+    batch.draw(Assets.femaleZombieAnimations.get(0 + animationCurrentFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+    animationSpeed++;
+    if (animationSpeed % Constants.female_zombie_phase == 0) {
+      animationCurrentFrame++;
+    }
+    if (animationCurrentFrame > 7) {
+      animationCurrentFrame = 0;
+    }
+  }
+
 }

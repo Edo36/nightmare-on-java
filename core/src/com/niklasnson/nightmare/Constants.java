@@ -22,22 +22,32 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.desktop;
+package com.niklasnson.nightmare;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.niklasnson.nightmare.Constants;
-import com.niklasnson.nightmare.GameMain;
+public class Constants {
+  // Game screen settings
+  public static final int width = 800;
+  public static final int height = 480;
 
-public class DesktopLauncher {
-	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+  public static final int female_zombie_width = 80;
+  public static final int female_zombie_height = 80;
 
-		// Config variables from Constants class.
-		config.width = Constants.width;
-		config.height = Constants.height;
-		config.title = Constants.title;
+  public static final int female_zombie_phase = 10;
 
-		new LwjglApplication(new GameMain(), config);
-	}
+  public static final int player_width = 80;
+  public static final int player_height = 80;
+  public static final int player_phase = 6;
+
+  public static final float ground_x = 0;
+  public static final float ground_y = 0;
+  public static final float ground_width = (float)width;
+  public static final float ground_height = 0.5f;
+  public static final float ground_density = 0f;
+
+  public static final String title = "My nightmare, it all stems from childhood";
+  public static final String press_to_start = "INSERT COIN TO CONTINUE";
+
+  public static final boolean dev_mode = false;
+
+
 }

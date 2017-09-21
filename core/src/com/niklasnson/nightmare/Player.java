@@ -22,15 +22,19 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.Player;
+package com.niklasnson.nightmare;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.*;
 
 import java.util.ArrayList;
 
 public class Player extends Sprite{
+
+  private World world;
+  private Body body;
 
   private ArrayList<Texture> playerAnimations = new ArrayList<Texture>();
 
@@ -43,22 +47,54 @@ public class Player extends Sprite{
   private boolean playerIdle;
   private boolean playerJumping;
 
-  public Player (float x, float y) {
+  public Player (World world, float x, float y) {
+    // Assign the worldUtils
+    this.world = world;
+
     // Frame counters
     this.currentFrameInIdle = 0;
     this.currentFrameInWalking = 15;
     this.currentFrameInRunning = 36;
     this.currentFrameInJumping = 37;
+
     // Player is currently
     this.playerIdle = true;
     this.playerRunning = false;
     this.playerJumping = false;
+
     // Sprite size
     setSize(80, 80);
+
     // Current position on screen
     setPosition(x, y);
+
     // Load all sprites
     initializeAnimations();
+
+    // Create the body around the player.
+    playerPhysics();
+  }
+
+  void playerPhysics() {
+    BodyDef bodyDef = new BodyDef();
+    bodyDef.type = BodyDef.BodyType.DynamicBody;
+    bodyDef.position.set(getX(), getY());
+
+    body = world.createBody(bodyDef);
+    PolygonShape shape = new PolygonShape();
+    shape.setAsBox(getWidth() / 2, getHeight() /2 );
+
+    FixtureDef fixtureDef = new FixtureDef();
+    fixtureDef.shape = shape;
+    fixtureDef.density = 1;
+
+    Fixture fixture = body.createFixture(fixtureDef);
+
+    shape.dispose();
+  }
+
+  public void updatePlayer() {
+    this.setPosition(body.getPosition().x, body.getPosition().y);
   }
 
   private void initializeAnimations () {
