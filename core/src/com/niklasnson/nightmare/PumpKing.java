@@ -24,25 +24,25 @@
 
 package com.niklasnson.nightmare;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.niklasnson.nightmare.Screens.GameScreen;
-import com.niklasnson.nightmare.Screens.MainMenuScreen;
-import com.niklasnson.nightmare.helpers.GameManager;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.World;
 
-public class GameMain extends Game {
-	private SpriteBatch batch;
+public class PumpKing extends Enemy {
 
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-    GameManager.getInstance().initializeGameData();
-    Assets.initialize();
-		setScreen(new GameScreen(this));
-	}
+  private World world;
+  private Body body;
 
-	@Override
-	public void render () { super.render(); }
+  public PumpKing (World world, float x, float y) {
+    this.world = world;
+    setSize(Constants.pump_king_width, Constants.pump_king_height);
+    setPosition(x, y);
+  }
 
-  public SpriteBatch getBatch () { return this.batch; }
+  public void draw(SpriteBatch spriteBatch) {
+  }
+
+  public void setAction (int value) {
+  }
+
 }

@@ -32,11 +32,19 @@ public class Constants {
   public static final int female_zombie_width = 80;
   public static final int female_zombie_height = 80;
 
-  public static final int female_zombie_phase = 10;
+  public static final int male_zombie_width = 80;
+  public static final int male_zombie_height = 80;
 
-  public static final int player_width = 80;
-  public static final int player_height = 80;
-  public static final int player_phase = 6;
+  public static final int pump_king_width = 80;
+  public static final int pump_king_height = 80;
+
+  public static final int player_width = 70;
+  public static final int player_height = 70;
+
+  public static final int female_zombie_phase = 15;
+  public static final int male_zombie_phase = 15;
+  public static final int pump_king_phase = 10;
+  public static final int player_phase = 4;
 
   public static final float ground_x = 0;
   public static final float ground_y = 0;
@@ -46,6 +54,7 @@ public class Constants {
 
   public static final String title = "My nightmare, it all stems from childhood";
   public static final String press_to_start = "INSERT COIN TO CONTINUE";
+  public static final String game_over = "GAME OVER";
 
   public static final boolean dev_mode = false;
 

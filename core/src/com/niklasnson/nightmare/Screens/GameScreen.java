@@ -25,8 +25,37 @@
 package com.niklasnson.nightmare.Screens;
 
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
+import com.niklasnson.nightmare.*;
 
 public class GameScreen implements Screen {
+
+  private GameMain game;
+  private World world;
+  private OrthographicCamera camera;
+  private Box2DDebugRenderer renderer;
+
+  private static final int VIEWPORT_WIDTH = 20;
+  private static final int VIEWPORT_HEIGHT = 13;
+
+  private GameState gameState;
+
+  public GameScreen (GameMain game) {
+    this.game = game;
+    this.world = WorldUtils.createWorld();
+    this.renderer = new Box2DDebugRenderer();
+    gameState.initialize();
+    setupCamera();
+  }
+
+  private void setupCamera () {
+    camera = new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
+    camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0f);
+    camera.update();
+  }
+
   @Override
   public void show() {
 
@@ -34,7 +63,12 @@ public class GameScreen implements Screen {
 
   @Override
   public void render(float delta) {
-
+    game.getBatch().begin();
+    game.getBatch().draw(Assets.background, 0,0, Constants.width, Constants.height);
+    game.getBatch().end();
+    if (Constants.dev_mode) {
+      renderer.render(world, camera.combined);
+    }
   }
 
   @Override

@@ -29,7 +29,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -46,7 +45,6 @@ public class MainMenuScreen implements Screen {
   private Body ground;
   private BitmapFont font;
   private Player player;
-  private FemaleZombie femaleZombie;
 
   private OrthographicCamera camera;
   private Box2DDebugRenderer renderer;
@@ -64,14 +62,25 @@ public class MainMenuScreen implements Screen {
     renderer = new Box2DDebugRenderer();
     font = new BitmapFont();
     player = new Player(world, Constants.width/2, (Constants.height - 80)/2);
+    player.setAction(3);
 
+    int posY = 180;
     // lets try with a list of enemies
-    int pos = 0;
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 3; i++)
     {
-      enemyList.add(new FemaleZombie(world, (Constants.width - player.getWidth() - 75)/2, pos));
-      pos = pos+100;
+      enemyList.add(Enemy.createEnemy(Enemy.EnemyType.FemaleZombie, world, posY, 100));
+      posY = posY + 35;
+      enemyList.add(Enemy.createEnemy(Enemy.EnemyType.MaleZombie, world, posY, 100));
+      posY = posY + 35;
     }
+
+    enemyList.get(0).setAction(3);
+    enemyList.get(1).setAction(3);
+    enemyList.get(2).setAction(3);
+    enemyList.get(3).setAction(3);
+    enemyList.get(4).setAction(3);
+    enemyList.get(5).setAction(3);
+
 
     setupCamera();
   }
@@ -89,7 +98,7 @@ public class MainMenuScreen implements Screen {
 
   @Override
   public void render(float delta) {
-    player.updatePlayer();
+    //player.updatePlayer();
 
     game.getBatch().begin();
     game.getBatch().draw(Assets.background, 0,0, Constants.width, Constants.height);

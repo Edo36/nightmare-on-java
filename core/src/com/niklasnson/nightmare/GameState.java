@@ -24,25 +24,11 @@
 
 package com.niklasnson.nightmare;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.niklasnson.nightmare.Screens.GameScreen;
-import com.niklasnson.nightmare.Screens.MainMenuScreen;
-import com.niklasnson.nightmare.helpers.GameManager;
+public class GameState {
+  private static GameState instance;
+  private int level;
 
-public class GameMain extends Game {
-	private SpriteBatch batch;
-
-	@Override
-	public void create () {
-		batch = new SpriteBatch();
-    GameManager.getInstance().initializeGameData();
-    Assets.initialize();
-		setScreen(new GameScreen(this));
-	}
-
-	@Override
-	public void render () { super.render(); }
-
-  public SpriteBatch getBatch () { return this.batch; }
+  public void initialize() {
+    System.out.println("initalize game state");
+  }
 }

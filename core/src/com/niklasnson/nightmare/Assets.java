@@ -36,6 +36,8 @@ public class Assets {
   public static Music music;
 
   public static ArrayList<Texture> femaleZombieAnimations = new ArrayList<Texture>();
+  public static ArrayList<Texture> maleZombieAnimations = new ArrayList<Texture>();
+  public static ArrayList<Texture> pumpKingAnimations = new ArrayList<Texture>();
   public static ArrayList<Texture> playerAnimations = new ArrayList<Texture>();
 
   public static ArrayList<Texture> staticTiles = new ArrayList<Texture>();
@@ -87,5 +89,17 @@ public class Assets {
     for (int i = 1; i <= 12; i++) { femaleZombieAnimations.add(loadTexture("FemaleZombie/Dead (" + i + ").png")); }
     for (int i = 1; i <= 15; i++) { femaleZombieAnimations.add(loadTexture("FemaleZombie/Idle (" + i + ").png")); }
     for (int i = 1; i <= 10; i++) { femaleZombieAnimations.add(loadTexture("FemaleZombie/Walk (" + i + ").png")); }
+
+    for (int i = 1; i <= 8; i++) { maleZombieAnimations.add(loadTexture("MaleZombie/Attack (" + i + ").png")); }
+    for (int i = 1; i <= 12; i++) { maleZombieAnimations.add(loadTexture("MaleZombie/Dead (" + i + ").png")); }
+    for (int i = 1; i <= 15; i++) { maleZombieAnimations.add(loadTexture("MaleZombie/Idle (" + i + ").png")); }
+    for (int i = 1; i <= 10; i++) { maleZombieAnimations.add(loadTexture("MaleZombie/Walk (" + i + ").png")); }
+
+    for (int i = 1; i <= 10; i++) { pumpKingAnimations.add(loadTexture("PumpKing/Dead (" + i + ").png")); }
+    for (int i = 1; i <= 10; i++) { pumpKingAnimations.add(loadTexture("PumpKing/Idle (" + i + ").png")); }
+    for (int i = 1; i <= 10; i++) { pumpKingAnimations.add(loadTexture("PumpKing/Jump (" + i + ").png")); }
+    for (int i = 1; i <= 8; i++) { pumpKingAnimations.add(loadTexture("PumpKing/Run (" + i + ").png")); }
+    for (int i = 1; i <= 10; i++) { pumpKingAnimations.add(loadTexture("PumpKing/Slide (" + i + ").png")); }
+    for (int i = 1; i <= 10; i++) { pumpKingAnimations.add(loadTexture("PumpKing/Walk (" + i + ").png")); }
   }
 }

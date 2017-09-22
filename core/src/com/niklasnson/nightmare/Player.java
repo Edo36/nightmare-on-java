@@ -29,50 +29,26 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.*;
 
-import java.util.ArrayList;
-
 public class Player extends Sprite{
+
+  protected enum Action {
+    DEAD, IDLE, JUMP, RUN, WALK
+  }
 
   private World world;
   private Body body;
 
-  private ArrayList<Texture> playerAnimations = new ArrayList<Texture>();
+  private Action action;
+  private int animationFrame = 0;
 
-  private int currentFrameInIdle;
-  private int currentFrameInWalking;
-  private int currentFrameInRunning;
-  private int currentFrameInJumping;
+  private int counter = 0;
 
-  private boolean playerRunning;
-  private boolean playerIdle;
-  private boolean playerJumping;
-
-  public Player (World world, float x, float y) {
-    // Assign the worldUtils
+   public Player (World world, float x, float y) {
     this.world = world;
-
-    // Frame counters
-    this.currentFrameInIdle = 0;
-    this.currentFrameInWalking = 15;
-    this.currentFrameInRunning = 36;
-    this.currentFrameInJumping = 37;
-
-    // Player is currently
-    this.playerIdle = true;
-    this.playerRunning = false;
-    this.playerJumping = false;
-
-    // Sprite size
-    setSize(80, 80);
-
-    // Current position on screen
+    this.action = Action.IDLE;
+    setSize(Constants.player_width, Constants.player_height);
     setPosition(x, y);
-
-    // Load all sprites
-    initializeAnimations();
-
-    // Create the body around the player.
-    playerPhysics();
+    //playerPhysics();
   }
 
   void playerPhysics() {
@@ -93,91 +69,83 @@ public class Player extends Sprite{
     shape.dispose();
   }
 
+  public void draw(SpriteBatch spriteBatch) {
+    if (action == Action.DEAD) {
+      spriteBatch.draw(Assets.playerAnimations.get(0 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      counter++;
+      if (counter % Constants.player_phase == 0) {
+        animationFrame++;
+        if (animationFrame == 30) {
+          animationFrame = 0;
+        }
+      }
+    }
+
+    if (action == Action.IDLE) {
+      spriteBatch.draw(Assets.playerAnimations.get(30 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      counter++;
+      if (counter % Constants.player_phase == 0) {
+        animationFrame++;
+        if (animationFrame == 16) {
+          animationFrame = 0;
+        }
+      }
+    }
+
+    if (action == Action.JUMP) {
+      spriteBatch.draw(Assets.playerAnimations.get(45 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      counter++;
+      if (counter % Constants.player_phase == 0) {
+        animationFrame++;
+        if (animationFrame == 30) {
+          animationFrame = 0;
+        }
+      }
+    }
+
+    if (action == Action.RUN) {
+      spriteBatch.draw(Assets.playerAnimations.get(75 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      counter++;
+      if (counter % Constants.player_phase == 0) {
+        animationFrame++;
+        if (animationFrame == 20) {
+          animationFrame = 0;
+        }
+      }
+    }
+
+    if (action == Action.WALK) {
+      spriteBatch.draw(Assets.playerAnimations.get(95 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      counter++;
+      if (counter % Constants.player_phase == 0) {
+        animationFrame++;
+        if (animationFrame == 20) {
+          animationFrame = 0;
+        }
+      }
+    }
+
+  }
+
   public void updatePlayer() {
     this.setPosition(body.getPosition().x, body.getPosition().y);
   }
 
-  private void initializeAnimations () {
-    for (int i=1; i <= 16; i++) {
-      playerAnimations.add(new Texture("Player/Idle (" + i + ").png"));
-    }
-
-    for (int i=1; i <= 20; i++) {
-      playerAnimations.add(new Texture("Player/Walk (" + i + ").png"));
-    }
-
-    for (int i=1; i <= 20; i++) {
-      playerAnimations.add(new Texture("Player/Run (" + i + ").png"));
-    }
-
-    for (int i=1; i <= 30; i++) {
-      playerAnimations.add(new Texture("Player/Jump (" + i + ").png"));
-    }
+  public void setAction (int value) {
+    if (value == 0)
+      action = Action.DEAD;
+    if (value == 1)
+      action = Action.IDLE;
+    if (value == 2)
+      action = Action.JUMP;
+    if (value == 3)
+      action = Action.RUN;
+    if (value == 4)
+      action = Action.WALK;
   }
 
-  public void drawIdle (SpriteBatch batch) {
-    batch.draw(playerAnimations.get(currentFrameInIdle), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    currentFrameInIdle++;
-    if (currentFrameInIdle > 15) {
-      currentFrameInIdle = 0;
-    }
-  }
-
-  public void drawWalking (SpriteBatch batch) {
-    batch.draw(playerAnimations.get(currentFrameInWalking), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    currentFrameInWalking++;
-    if (currentFrameInWalking > 35) {
-      currentFrameInWalking = 15;
-    }
-  }
-
-  public void drawRunning (SpriteBatch batch) {
-    batch.draw(playerAnimations.get(currentFrameInRunning), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    currentFrameInRunning++;
-    if (currentFrameInRunning > 55) {
-      currentFrameInRunning = 36;
-    }
-  }
-
-  public void drawJumping (SpriteBatch batch) {
-    batch.draw(playerAnimations.get(currentFrameInJumping), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    setPosition(this.getX(), this.getY() + 1);
-    currentFrameInJumping++;
-    if (currentFrameInJumping > 85) {
-      currentFrameInJumping = 37;
-    }
-  }
-
-  public void draw (SpriteBatch batch) {
-    if (playerRunning) {
-      drawRunning(batch);
-    }
-
-    if (playerIdle) {
-      drawIdle(batch);
-    }
-
-    if (playerJumping) {
-      drawJumping(batch);
-    }
-  }
-
-  public void Run () {
-    playerRunning = true;
-    playerIdle = false;
-    playerJumping = false;
-  }
-
-  public void Idle () {
-    playerIdle = true;
-    playerRunning = false;
-    playerJumping = false;
-  }
-
-  public void Jump () {
-    playerJumping = true;
-    playerIdle = false;
-    playerRunning = false;
+  public Action getAction () {
+     return this.action;
   }
 
 }

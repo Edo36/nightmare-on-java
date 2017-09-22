@@ -33,38 +33,80 @@ import java.util.ArrayList;
 
 public class FemaleZombie extends Enemy {
 
+  protected enum Action {
+    ATTACK, DEAD, IDLE, WALK
+  }
+
   private World world;
   private Body body;
 
-  private int animationAttackStart = 0;
-  private int animationDeadStart = 0;
-  private int animationIdleStart = 0;
-  private int animationWalkStart = 0;
+  private Action action;
+  private int animationFrame = 0;
 
-  private int animationAttackLength = 8;
-  private int animationDeadLenght = 12;
-  private int animationIdleLength = 15;
-  private int animationWalkLength = 10;
-
-  private int animationCurrentFrame = 0;
-  private int animationSpeed = 0;
+  private int counter = 0;
 
   public FemaleZombie (World world, float x, float y) {
     this.world = world;
+    this.action = Action.IDLE;
     setSize(Constants.female_zombie_width, Constants.female_zombie_height);
     setPosition(x, y);
   }
 
-  @Override
-  public void draw(SpriteBatch batch) {
-    batch.draw(Assets.femaleZombieAnimations.get(0 + animationCurrentFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    animationSpeed++;
-    if (animationSpeed % Constants.female_zombie_phase == 0) {
-      animationCurrentFrame++;
+  public void draw(SpriteBatch spriteBatch) {
+    if (action == Action.ATTACK) {
+      spriteBatch.draw(Assets.femaleZombieAnimations.get(0 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      counter++;
+      if (counter % Constants.female_zombie_phase == 0) {
+        animationFrame++;
+        if (animationFrame == 8) {
+          animationFrame = 0;
+        }
+      }
     }
-    if (animationCurrentFrame > 7) {
-      animationCurrentFrame = 0;
+
+    if (action == Action.DEAD) {
+      spriteBatch.draw(Assets.femaleZombieAnimations.get(7 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      counter++;
+      if (counter % Constants.female_zombie_phase == 0) {
+        animationFrame++;
+        if (animationFrame == 12) {
+          animationFrame = 0;
+        }
+      }
     }
+
+    if (action == Action.IDLE) {
+      spriteBatch.draw(Assets.femaleZombieAnimations.get(20 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      counter++;
+      if (counter % Constants.female_zombie_phase == 0) {
+        animationFrame++;
+        if (animationFrame == 15) {
+          animationFrame = 0;
+        }
+      }
+    }
+
+    if (action == Action.WALK) {
+      spriteBatch.draw(Assets.femaleZombieAnimations.get(35 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      counter++;
+      if (counter % Constants.female_zombie_phase == 0) {
+        animationFrame++;
+        if (animationFrame == 10) {
+          animationFrame = 0;
+        }
+      }
+    }
+  }
+
+  public void setAction (int value) {
+    if (value == 0)
+      action = Action.ATTACK;
+    if (value == 1)
+      action = Action.DEAD;
+    if (value == 2)
+      action = Action.IDLE;
+    if (value == 3)
+      action = Action.WALK;
   }
 
 }

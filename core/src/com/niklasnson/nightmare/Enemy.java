@@ -26,13 +26,33 @@ package com.niklasnson.nightmare;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.World;
 
 public abstract class Enemy extends Sprite {
 
   public enum EnemyType {
-    FemaleZombie
+    FemaleZombie, MaleZombie, PumpKing
   }
 
-  public void draw (SpriteBatch batch) {}
+  public static Enemy createEnemy (EnemyType enemyType, World world, int x, int y) {
+    Enemy enemy = null;
+
+    switch (enemyType) {
+      case FemaleZombie:
+        enemy = new FemaleZombie(world, x, y);
+        return enemy;
+      case MaleZombie:
+        enemy = new MaleZombie(world, x, y);
+        return enemy;
+      case PumpKing:
+        enemy = new PumpKing(world, x, y);
+        return enemy;
+      default:
+        return enemy;
+    }
+  }
+
+  public abstract void draw (SpriteBatch spriteBatch);
+  public abstract void setAction (int value);
 
 }
