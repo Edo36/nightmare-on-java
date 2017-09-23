@@ -24,36 +24,59 @@
 
 package com.niklasnson.nightmare.Screens;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.niklasnson.nightmare.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class GameScreen implements Screen {
 
   private GameMain game;
   private World world;
+
+  private Player player;
+
   private OrthographicCamera camera;
   private Box2DDebugRenderer renderer;
+  private Viewport viewport;
 
-  private static final int VIEWPORT_WIDTH = 20;
-  private static final int VIEWPORT_HEIGHT = 13;
+  private static ArrayList<Enemy> enemiesList = new ArrayList<Enemy>();
+  private static ArrayList<Tile> gameMap = new ArrayList<Tile>();
 
-  private GameState gameState;
-
-  public GameScreen (GameMain game) {
+   public GameScreen (GameMain game) {
     this.game = game;
     this.world = WorldUtils.createWorld();
     this.renderer = new Box2DDebugRenderer();
-    gameState.initialize();
     setupCamera();
+    initialize();
   }
 
   private void setupCamera () {
-    camera = new OrthographicCamera(VIEWPORT_WIDTH, VIEWPORT_HEIGHT);
-    camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0f);
+    camera = new OrthographicCamera(Constants.width, Constants.height);
+    camera.position.set(Constants.width/2f, Constants.height/2, 0f);
+    viewport = new StretchViewport(Constants.width, Constants.height, camera);
+    renderer = new Box2DDebugRenderer();
     camera.update();
+  }
+
+  private void initialize () {
+    player = new Player(world, Constants.width/2, (Constants.height - 80)/2);
+    player.setAction(3);
+    gameMap.add(new Tile(world, Constants.width/2 , Constants.height / 2));
+  }
+
+  void update(float delta) {
+    // move camera
+    // check bounds
+    // count score
   }
 
   @Override
@@ -63,12 +86,30 @@ public class GameScreen implements Screen {
 
   @Override
   public void render(float delta) {
+    update(delta);
+
+    Gdx.gl.glClearColor(0, 0, 0, 1);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
     game.getBatch().begin();
     game.getBatch().draw(Assets.background, 0,0, Constants.width, Constants.height);
+
+    // Draw the map
+    Iterator<Tile> it = gameMap.iterator();
+    while (it.hasNext()) {
+      it.next().draw(game.getBatch());
+    }
+
+    player.draw(game.getBatch());
+
     game.getBatch().end();
+
     if (Constants.dev_mode) {
       renderer.render(world, camera.combined);
     }
+
+    player.updatePlayer();
+    world.step(Gdx.graphics.getDeltaTime(), 6, 2);
   }
 
   @Override
