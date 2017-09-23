@@ -53,7 +53,7 @@ public class Assets {
     music = Gdx.audio.newMusic(Gdx.files.internal("Sounds/music.mp3"));
     music.setLooping(true);
     music.setVolume(0.1f);
-    music.play();
+    //music.play();
 
     loadAnimations();
     loadTiles();
