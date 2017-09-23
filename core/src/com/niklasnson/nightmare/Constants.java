@@ -29,6 +29,8 @@ public class Constants {
   public static final int width = 800;
   public static final int height = 480;
 
+  public static final int ppm = 100;
+
   public static final int female_zombie_width = 80;
   public static final int female_zombie_height = 80;
 
@@ -40,6 +42,9 @@ public class Constants {
 
   public static final int player_width = 70;
   public static final int player_height = 70;
+
+  public static final int tile_width = 128;
+  public static final int tile_height = 128;
 
   public static final int female_zombie_phase = 15;
   public static final int male_zombie_phase = 15;
@@ -56,7 +61,5 @@ public class Constants {
   public static final String press_to_start = "INSERT COIN TO CONTINUE";
   public static final String game_over = "GAME OVER";
 
-  public static final boolean dev_mode = false;
-
-
+  public static final boolean dev_mode = true;
 }
