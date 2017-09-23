@@ -44,29 +44,38 @@ public class Player extends Sprite{
   private int counter = 0;
 
    public Player (World world, float x, float y) {
-    this.world = world;
-    this.action = Action.IDLE;
-    setSize(Constants.player_width, Constants.player_height);
-    setPosition(x, y);
-    //playerPhysics();
+     this.world = world;
+     this.action = Action.IDLE;
+     setSize(Constants.player_width, Constants.player_height);
+     setPosition(x, y);
+     createBody();
   }
 
-  void playerPhysics() {
+    void createBody() {
     BodyDef bodyDef = new BodyDef();
+
     bodyDef.type = BodyDef.BodyType.DynamicBody;
-    bodyDef.position.set(getX(), getY());
+    bodyDef.position.set(getX() / Constants.ppm, getY() / Constants.ppm);
 
     body = world.createBody(bodyDef);
+    body.setFixedRotation(true);
+
     PolygonShape shape = new PolygonShape();
-    shape.setAsBox(getWidth() / 2, getHeight() /2 );
+    shape.setAsBox((getWidth() / 2f - 20f) / Constants.ppm,
+        (getHeight() / 2f) / Constants.ppm);
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.density = 1;
+    fixtureDef.density = 0f;
+    fixtureDef.friction = 2f;
+    //fixtureDef.filter.categoryBits = GameInfo.PLAYER;
+    //fixtureDef.filter.maskBits = GameInfo.DEFAULT | GameInfo.COLLECTABLE;
 
     Fixture fixture = body.createFixture(fixtureDef);
+    fixture.setUserData("Player");
 
     shape.dispose();
+
   }
 
   public void draw(SpriteBatch spriteBatch) {
@@ -128,7 +137,7 @@ public class Player extends Sprite{
   }
 
   public void updatePlayer() {
-    this.setPosition(body.getPosition().x, body.getPosition().y);
+     this.setPosition(body.getPosition().x, body.getPosition().y);
   }
 
   public void setAction (int value) {
