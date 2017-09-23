@@ -55,14 +55,15 @@ public class Player extends Sprite{
     BodyDef bodyDef = new BodyDef();
 
     bodyDef.type = BodyDef.BodyType.DynamicBody;
-    bodyDef.position.set(getX() / Constants.ppm, getY() / Constants.ppm);
+    bodyDef.position.set(getX(), getY());
 
     body = world.createBody(bodyDef);
     body.setFixedRotation(true);
 
     PolygonShape shape = new PolygonShape();
-    shape.setAsBox((getWidth() / 2f - 20f) / Constants.ppm,
-        (getHeight() / 2f) / Constants.ppm);
+    // Här vill jag pilla!
+    shape.setAsBox(getWidth()/2f,
+        getHeight() / 2f);
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
@@ -73,6 +74,8 @@ public class Player extends Sprite{
 
     Fixture fixture = body.createFixture(fixtureDef);
     fixture.setUserData("Player");
+
+    System.out.println(fixture.toString());
 
     shape.dispose();
 
@@ -137,6 +140,7 @@ public class Player extends Sprite{
   }
 
   public void updatePlayer() {
+
      this.setPosition(body.getPosition().x, body.getPosition().y);
   }
 

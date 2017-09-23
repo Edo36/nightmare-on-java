@@ -28,6 +28,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -41,6 +42,7 @@ public class GameScreen implements Screen {
 
   private GameMain game;
   private World world;
+  private Body ground;
 
   private Player player;
 
@@ -54,9 +56,10 @@ public class GameScreen implements Screen {
    public GameScreen (GameMain game) {
     this.game = game;
     this.world = WorldUtils.createWorld();
+    ground = WorldUtils.createGround(world);
     this.renderer = new Box2DDebugRenderer();
-    setupCamera();
     initialize();
+    setupCamera();
   }
 
   private void setupCamera () {
@@ -68,15 +71,19 @@ public class GameScreen implements Screen {
   }
 
   private void initialize () {
-    player = new Player(world, Constants.width/2, (Constants.height - 80)/2);
-    player.setAction(3);
-    gameMap.add(new Tile(world, Constants.width/2 , Constants.height / 2));
+    player = new Player(world, (Constants.width-Constants.player_width)/2, 300);
+    //player.setAction(3);
+    //gameMap.add(new Tile(world, Constants.width/2 , Constants.height / 2));
   }
 
   void update(float delta) {
-    // move camera
+    moveCamera(delta);
     // check bounds
     // count score
+  }
+
+  void moveCamera (float delta) {
+     //camera.translate(+1, 0);
   }
 
   @Override
@@ -95,10 +102,10 @@ public class GameScreen implements Screen {
     game.getBatch().draw(Assets.background, 0,0, Constants.width, Constants.height);
 
     // Draw the map
-    Iterator<Tile> it = gameMap.iterator();
+/*    Iterator<Tile> it = gameMap.iterator();
     while (it.hasNext()) {
       it.next().draw(game.getBatch());
-    }
+    }*/
 
     player.draw(game.getBatch());
 
@@ -108,7 +115,10 @@ public class GameScreen implements Screen {
       renderer.render(world, camera.combined);
     }
 
+    camera.update();
+
     player.updatePlayer();
+
     world.step(Gdx.graphics.getDeltaTime(), 6, 2);
   }
 
@@ -134,6 +144,8 @@ public class GameScreen implements Screen {
 
   @Override
   public void dispose() {
-
+    world.dispose();
+    player.getTexture().dispose();
+    renderer.dispose();
   }
 }
