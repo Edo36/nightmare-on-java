@@ -31,7 +31,7 @@ import com.badlogic.gdx.physics.box2d.World;
 public abstract class Enemy extends Sprite {
 
   public enum EnemyType {
-    FemaleZombie, MaleZombie, PumpKing
+    FemaleZombie
   }
 
   /**
