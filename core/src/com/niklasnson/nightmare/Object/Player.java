@@ -26,24 +26,32 @@ package com.niklasnson.nightmare.Object;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.niklasnson.nightmare.Assets;
 import com.niklasnson.nightmare.Constants;
+
 
 
 public class Player extends Sprite{
 
   protected enum Action {
-    DEAD, IDLE, JUMP, RUN, WALK
+    IDLE, JUMP, RUN, WALK
   }
 
-  private World         world;
-  private Body          body;
-  private Action        action;
+  private World             world;
+  private Body              body;
+  private Action            action;
 
-  private int           animationFrame = 0;
+  private TextureAtlas      playerAtlas;
+  private Array<Sprite>     playerIdle = new Array<Sprite>();
+  private Array<Sprite>     playerJump = new Array<Sprite>();
+  private Array<Sprite>     playerRun = new Array<Sprite>();
+  private Array<Sprite>     playerWalk = new Array<Sprite>();
 
-  private int           counter = 0;
+  private int               animationFrame = 0;
+  private int               counter = 0;
 
   /**
    * Default constructor
@@ -62,7 +70,23 @@ public class Player extends Sprite{
 
     setPosition(x, y);
 
+    initializeAnimations();
+
     createBody();
+  }
+
+  /**
+   * Create the animation vectors
+   */
+  void initializeAnimations () {
+    TextureAtlas spriteSheet = new TextureAtlas("player.txt");
+
+    for (int i = 1; i <= 16; i++) { playerIdle.add(spriteSheet.createSprite("Idle (" + i + ")")); }
+    for (int i = 1; i <= 30; i++) { playerJump.add(spriteSheet.createSprite("Jump (" + i + ")")); }
+    for (int i = 1; i <= 20; i++) { playerRun.add(spriteSheet.createSprite("Run (" + i + ")")); }
+    for (int i = 1; i <= 20; i++) { playerWalk.add(spriteSheet.createSprite("Walk (" + i + ")")); }
+
+    //spriteSheet.dispose();
   }
 
   /**
@@ -113,19 +137,8 @@ public class Player extends Sprite{
     float playerH = this.getHeight();
     float playerW = this.getWidth();
 
-    if (action == Action.DEAD) {
-      spriteBatch.draw(Assets.playerAnimations.get(0 + animationFrame), playerX, playerY, playerW, playerH);
-      counter++;
-      if (counter % Constants.player_phase == 0) {
-        animationFrame++;
-        if (animationFrame == 30) {
-          animationFrame = 0;
-        }
-      }
-    }
-
     if (action == Action.IDLE) {
-      spriteBatch.draw(Assets.playerAnimations.get(30 + animationFrame), playerX, playerY, playerW, playerH);
+      spriteBatch.draw(playerIdle.get(animationFrame), playerX, playerY);
       counter++;
       if (counter % Constants.player_phase == 0) {
         animationFrame++;
@@ -136,7 +149,7 @@ public class Player extends Sprite{
     }
 
     if (action == Action.JUMP) {
-      spriteBatch.draw(Assets.playerAnimations.get(45 + animationFrame), playerX, playerY, playerW, playerH);
+      spriteBatch.draw(playerJump.get(animationFrame), playerX, playerY,playerW, playerH);
       counter++;
       if (counter % Constants.player_phase == 0) {
         animationFrame++;
@@ -147,6 +160,7 @@ public class Player extends Sprite{
     }
 
     if (action == Action.RUN) {
+      spriteBatch.draw(playerRun.get(animationFrame), playerX, playerY,playerW, playerH);
       spriteBatch.draw(Assets.playerAnimations.get(75 + animationFrame), playerX, playerY, playerW, playerH);
       counter++;
       if (counter % Constants.player_phase == 0) {
@@ -158,7 +172,7 @@ public class Player extends Sprite{
     }
 
     if (action == Action.WALK) {
-      spriteBatch.draw(Assets.playerAnimations.get(95 + animationFrame), playerX, playerY, playerW, playerH);
+      spriteBatch.draw(playerWalk.get(animationFrame), playerX, playerY,playerW, playerH);
       counter++;
       if (counter % Constants.player_phase == 0) {
         animationFrame++;
@@ -200,18 +214,15 @@ public class Player extends Sprite{
    */
   public void setAction (int value) {
     if (value == 0)
-      action = Action.DEAD;
-
-    if (value == 1)
       action = Action.IDLE;
 
-    if (value == 2)
+    if (value == 1)
       action = Action.JUMP;
 
-    if (value == 3)
+    if (value == 2)
       action = Action.RUN;
 
-    if (value == 4)
+    if (value == 3)
       action = Action.WALK;
   }
 
