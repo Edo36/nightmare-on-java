@@ -25,122 +25,184 @@
 package com.niklasnson.nightmare.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.niklasnson.nightmare.*;
-
-import java.util.ArrayList;
-import java.util.Iterator;
+import com.niklasnson.nightmare.Constants;
+import com.niklasnson.nightmare.GameMain;
+import com.niklasnson.nightmare.Objects.Map;
+import com.niklasnson.nightmare.Objects.Player;
+import com.niklasnson.nightmare.Objects.WorldUtils;
 
 public class GameScreen implements Screen {
 
-  private GameMain game;
-  private World world;
-  private Body ground;
+  private GameMain            game;
+  private World               world;
+  private Body                ground;
+  private Map                 map;
 
-  private Player player;
+  private Player              player;
 
-  private OrthographicCamera camera;
-  private Box2DDebugRenderer renderer;
-  private Viewport viewport;
+  private OrthographicCamera  camera;
 
-  private static ArrayList<Enemy> enemiesList = new ArrayList<Enemy>();
-  private static ArrayList<Tile> gameMap = new ArrayList<Tile>();
+  private Box2DDebugRenderer  renderer;
+  private Viewport            viewport;
+
+  private int level = 1;
 
    public GameScreen (GameMain game) {
     this.game = game;
+
     this.world = WorldUtils.createWorld();
-    ground = WorldUtils.createGround(world);
+
     this.renderer = new Box2DDebugRenderer();
-    initialize();
-    setupCamera();
+
+    initializeCamera();
+
+    initializeLevel(level, camera, game.getBatch());
+
+    initializePlayer(10, 10);
   }
 
-  private void setupCamera () {
-    camera = new OrthographicCamera(Constants.width, Constants.height);
-    camera.position.set(Constants.width/2f, Constants.height/2, 0f);
-    viewport = new StretchViewport(Constants.width, Constants.height, camera);
+  private void initializeCamera () {
+    camera = new OrthographicCamera(
+        Constants.width,
+        Constants.height);
+
+    camera.setToOrtho(
+        false,
+        Constants.width / Constants.ppm,
+        Constants.height / Constants.ppm);
+
+    camera.position.set(
+        Constants.width/2f,
+        Constants.height/2f,
+        0);
+
+    viewport = new StretchViewport(
+        Constants.width,
+        Constants.height, camera);
+
     renderer = new Box2DDebugRenderer();
+
     camera.update();
   }
 
-  private void initialize () {
-    player = new Player(world, (Constants.width-Constants.player_width)/2, 300);
-    //player.setAction(3);
-    //gameMap.add(new Tile(world, Constants.width/2 , Constants.height / 2));
+  /**
+   * Create a player on the stage
+   * @param x position of player X
+   * @param y position of player Y
+   */
+  private void initializePlayer (float x, float y) {
+    player = new Player(
+        world,
+
+        32,
+        64+(Constants.player_height/2)
+    );
+    player.setAction(1);
   }
 
+  /**
+   * Initialize a new level
+   * @param level current level as an integer
+   * @param camera
+   * @param batch
+   */
+  private void initializeLevel (int level, OrthographicCamera camera, SpriteBatch batch) {
+     map = new Map(level, camera, batch);
+     map.initalizeTiles(world);
+  }
+
+  /**
+   * Batch update function for delta
+   * @param delta
+   */
   void update(float delta) {
-    moveCamera(delta);
-    // check bounds
-    // count score
+     movePlayer(delta);
+     moveCamera(delta);
   }
 
+  /**
+   * Move camera to a new position on screen
+   * @param delta
+   */
   void moveCamera (float delta) {
-     //camera.translate(+1, 0);
+    //camera.translate(15 * delta,0,0);
+  }
+
+  /**
+   * Move player on screen if any key is pressed
+   * @param delta
+   */
+  void movePlayer (float delta) {
+     if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+       player.movePlayer(-2f);
+     } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+       player.movePlayer(2f);
+     }
   }
 
   @Override
-  public void show() {
+  public void show() {}
 
-  }
-
+  /**
+   * Render function on screen
+   * @param delta
+   */
   @Override
   public void render(float delta) {
     update(delta);
 
-    Gdx.gl.glClearColor(0, 0, 0, 1);
+    Gdx.gl.glClearColor(1, 0, 0, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     game.getBatch().begin();
-    game.getBatch().draw(Assets.background, 0,0, Constants.width, Constants.height);
 
-    // Draw the map
-/*    Iterator<Tile> it = gameMap.iterator();
-    while (it.hasNext()) {
-      it.next().draw(game.getBatch());
-    }*/
+    map.drawBackgroundLayer();
+
+    map.drawForegroundLayer();
 
     player.draw(game.getBatch());
 
     game.getBatch().end();
 
-    if (Constants.dev_mode) {
-      renderer.render(world, camera.combined);
-    }
+    renderer.render(
+        world,
+        camera.combined
+    );
 
     camera.update();
 
+    map.updateCamera();
+
     player.updatePlayer();
 
-    world.step(Gdx.graphics.getDeltaTime(), 6, 2);
+    world.step(
+        Gdx.graphics.getDeltaTime(),
+        6,
+        2
+    );
   }
 
   @Override
-  public void resize(int width, int height) {
-
-  }
+  public void resize(int width, int height) {}
 
   @Override
-  public void pause() {
-
-  }
+  public void pause() {}
 
   @Override
-  public void resume() {
-
-  }
+  public void resume() {}
 
   @Override
-  public void hide() {
-
-  }
+  public void hide() {}
 
   @Override
   public void dispose() {

@@ -29,6 +29,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.*;
 
+
 public class Player extends Sprite{
 
   protected enum Action {
@@ -37,17 +38,24 @@ public class Player extends Sprite{
 
   private World world;
   private Body body;
-
   private Action action;
+
   private int animationFrame = 0;
 
   private int counter = 0;
 
    public Player (World world, float x, float y) {
      this.world = world;
+
      this.action = Action.IDLE;
-     setSize(Constants.player_width, Constants.player_height);
+
+     setSize(
+         Constants.player_width,
+         Constants.player_height
+     );
+
      setPosition(x, y);
+
      createBody();
   }
 
@@ -55,35 +63,45 @@ public class Player extends Sprite{
     BodyDef bodyDef = new BodyDef();
 
     bodyDef.type = BodyDef.BodyType.DynamicBody;
-    bodyDef.position.set(getX(), getY());
+
+    bodyDef.position.set(
+        getX() / Constants.ppm,
+        getY() / Constants.ppm
+    );
 
     body = world.createBody(bodyDef);
+
     body.setFixedRotation(true);
 
     PolygonShape shape = new PolygonShape();
-    // Här vill jag pilla!
-    shape.setAsBox(getWidth()/2f,
-        getHeight() / 2f);
+
+    shape.setAsBox(
+        (getWidth()/2f)/Constants.ppm,
+        (getHeight()/2f)/Constants.ppm
+    );
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
+    fixtureDef.friction = 1f;
     fixtureDef.density = 0f;
-    fixtureDef.friction = 2f;
-    //fixtureDef.filter.categoryBits = GameInfo.PLAYER;
-    //fixtureDef.filter.maskBits = GameInfo.DEFAULT | GameInfo.COLLECTABLE;
+    fixtureDef.filter.categoryBits = Constants.filterPlayer;
+    fixtureDef.filter.maskBits = Constants.filterDefault;
 
     Fixture fixture = body.createFixture(fixtureDef);
     fixture.setUserData("Player");
 
-    System.out.println(fixture.toString());
-
     shape.dispose();
-
-  }
+   }
 
   public void draw(SpriteBatch spriteBatch) {
+
+    float playerX = this.getX() - this.getWidth()/2;
+    float playerY = this.getY() - this.getHeight()/2;
+    float playerH = this.getHeight();
+    float playerW = this.getWidth();
+
     if (action == Action.DEAD) {
-      spriteBatch.draw(Assets.playerAnimations.get(0 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      spriteBatch.draw(Assets.playerAnimations.get(0 + animationFrame), playerX, playerY, playerW, playerH);
       counter++;
       if (counter % Constants.player_phase == 0) {
         animationFrame++;
@@ -94,7 +112,7 @@ public class Player extends Sprite{
     }
 
     if (action == Action.IDLE) {
-      spriteBatch.draw(Assets.playerAnimations.get(30 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      spriteBatch.draw(Assets.playerAnimations.get(30 + animationFrame), playerX, playerY, playerW, playerH);
       counter++;
       if (counter % Constants.player_phase == 0) {
         animationFrame++;
@@ -105,7 +123,7 @@ public class Player extends Sprite{
     }
 
     if (action == Action.JUMP) {
-      spriteBatch.draw(Assets.playerAnimations.get(45 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      spriteBatch.draw(Assets.playerAnimations.get(45 + animationFrame), playerX, playerY, playerW, playerH);
       counter++;
       if (counter % Constants.player_phase == 0) {
         animationFrame++;
@@ -116,7 +134,7 @@ public class Player extends Sprite{
     }
 
     if (action == Action.RUN) {
-      spriteBatch.draw(Assets.playerAnimations.get(75 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      spriteBatch.draw(Assets.playerAnimations.get(75 + animationFrame), playerX, playerY, playerW, playerH);
       counter++;
       if (counter % Constants.player_phase == 0) {
         animationFrame++;
@@ -127,7 +145,7 @@ public class Player extends Sprite{
     }
 
     if (action == Action.WALK) {
-      spriteBatch.draw(Assets.playerAnimations.get(95 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
+      spriteBatch.draw(Assets.playerAnimations.get(95 + animationFrame), playerX, playerY, playerW, playerH);
       counter++;
       if (counter % Constants.player_phase == 0) {
         animationFrame++;
@@ -140,19 +158,25 @@ public class Player extends Sprite{
   }
 
   public void updatePlayer() {
-
-     this.setPosition(body.getPosition().x, body.getPosition().y);
+     this.setPosition(
+         body.getPosition().x * Constants.ppm,
+         body.getPosition().y * Constants.ppm
+     );
   }
 
   public void setAction (int value) {
     if (value == 0)
       action = Action.DEAD;
+
     if (value == 1)
       action = Action.IDLE;
+
     if (value == 2)
       action = Action.JUMP;
+
     if (value == 3)
       action = Action.RUN;
+
     if (value == 4)
       action = Action.WALK;
   }

@@ -43,8 +43,8 @@ public class Constants {
   public static final int player_width = 70;
   public static final int player_height = 70;
 
-  public static final int tile_width = 128;
-  public static final int tile_height = 128;
+  public static final int tile_width = 32;
+  public static final int tile_height = 32;
 
   public static final int female_zombie_phase = 15;
   public static final int male_zombie_phase = 15;
