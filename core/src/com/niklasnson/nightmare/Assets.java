@@ -56,26 +56,6 @@ public class Assets {
     //music.play();
 
     loadAnimations();
-    loadTiles();
-    loadObjects();
-  }
-
-  public static void loadObjects () {
-    staticObjects.add(loadTexture("Objects/ArrowSign.png"));
-    staticObjects.add(loadTexture("Objects/Bush (1).png"));
-    staticObjects.add(loadTexture("Objects/Bush (2).png"));
-    staticObjects.add(loadTexture("Objects/Crate.png"));
-    staticObjects.add(loadTexture("Objects/DeadBush.png"));
-    staticObjects.add(loadTexture("Objects/Sign.png"));
-    staticObjects.add(loadTexture("Objects/Skeleton.png"));
-    staticObjects.add(loadTexture("Objects/TombStone (1).png"));
-    staticObjects.add(loadTexture("Objects/TombStone (2).png"));
-    staticObjects.add(loadTexture("Objects/Tree.png"));
-  }
-
-  public static void loadTiles () {
-    for (int i = 1; i <= 16; i++) { staticTiles.add(loadTexture("Tiles/Tile (" + i + ").png")); }
-    for (int i = 1; i <= 4; i++) { staticTiles.add(loadTexture("Tiles/Bone (" + i + ").png")); }
   }
 
   public static void loadAnimations () {

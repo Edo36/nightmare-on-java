@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.Objects;
+package com.niklasnson.nightmare.Object;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -57,14 +57,14 @@ public class Map {
   }
 
   /**
-   * Initialize the map
+   * Initialize the Map
    * @param level
    * @param camera
    * @param batch
    */
   private void initialize (int level, OrthographicCamera camera, SpriteBatch batch) {
     Gdx.app.log("[Map]", "initialize level " + level);
-    tiledMap = new TmxMapLoader().load("map/level." + level + ".tmx");
+    tiledMap = new TmxMapLoader().load("Map/level." + level + ".tmx");
     foregroundLayer = (TiledMapTileLayer) tiledMap.getLayers().get(foregroundLayerName);
 
     mapTileSize = foregroundLayer.getTileWidth();

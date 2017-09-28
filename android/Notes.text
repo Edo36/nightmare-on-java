@@ -1,3 +1,101 @@
+  private void createPlatform () {
+     BodyDef bodyDef = new BodyDef();
+     Vector2 origin = new Vector2();
+
+     for (Rectangle rectangle : platformRects) {
+
+       bodyDef.type = BodyDef.BodyType.StaticBody;
+
+       Body body = world.createBody(bodyDef);
+
+       PolygonShape polygonShape = new PolygonShape();
+       origin.x = rectangle.getX();
+       origin.y = rectangle.getY();
+       polygonShape.setAsBox(rectangle.width, rectangle.height, origin, 0);
+
+       FixtureDef fixtureDef = new FixtureDef();
+       fixtureDef.shape = polygonShape;
+       fixtureDef.friction = 1f;
+       fixtureDef.density = 0f;
+       fixtureDef.filter.categoryBits = Constants.filterDefault;
+
+       Fixture fixture = body.createFixture(fixtureDef);
+       fixture.setUserData("Tile");
+     }
+  }
+
+
+  package com.niklasnson.nightmare.Objects;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.niklasnson.nightmare.Constants;
+
+import java.util.ArrayList;
+
+public class Level {
+
+  private TiledMap tiledMap;
+  private TiledMapRenderer tiledMapRenderer;
+
+  private static ArrayList<Rectangle> platformRects = new ArrayList<Rectangle>();
+
+  //private ArrayList<>
+
+  public Level (int level) {
+    initialize(level);
+  }
+
+  private void initialize (int level) {
+    Gdx.app.log("[Level]", "initialize level " + level);
+    tiledMap = new TmxMapLoader().load("Map/level." + level + ".tmx");
+    tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
+    MapLayer collisionObjectLayer = tiledMap.getLayers().get(Constants.environmentLayer);
+
+    for (MapObject object : collisionObjectLayer.getObjects())
+      if (object instanceof RectangleMapObject) {
+        RectangleMapObject rectangleObject = (RectangleMapObject) object;
+        Rectangle rectangle = rectangleObject.getRectangle();
+        platformRects.add(rectangle);
+      }
+  }
+
+  public TiledMap getTiledMap() {
+    return tiledMap;
+  }
+
+  public void setTiledMap(TiledMap tiledMap) {
+    this.tiledMap = tiledMap;
+  }
+
+  public TiledMapRenderer getTiledMapRenderer() {
+    return tiledMapRenderer;
+  }
+
+  public void setTiledMapRenderer(TiledMapRenderer tiledMapRenderer) {
+    this.tiledMapRenderer = tiledMapRenderer;
+  }
+
+  public static ArrayList<Rectangle> getPlatformRects() {
+    return platformRects;
+  }
+
+  public static void setPlatformRects(ArrayList<Rectangle> platformRects) {
+    Level.platformRects = platformRects;
+  }
+
+}
+
+
+
 /*
  * MIT License
  *
@@ -22,7 +120,7 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.Screens;
+package com.niklasnson.nightmare.Screen;
 
 import com.badlogic.gdx.Screen;
 
@@ -33,6 +131,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.niklasnson.nightmare.*;
+import com.niklasnson.nightmare.Object.Player;
+import com.niklasnson.nightmare.Object.WorldUtils;
 
 
 import java.util.ArrayList;
@@ -58,7 +158,6 @@ public class MainMenuScreen implements Screen {
   public MainMenuScreen (GameMain game) {
     this.game = game;
     world = WorldUtils.createWorld();
-    ground = WorldUtils.createGround(world);
     renderer = new Box2DDebugRenderer();
     font = new BitmapFont();
     player = new Player(world, Constants.width/2, (Constants.height - 80)/2);

@@ -22,14 +22,13 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare;
+package com.niklasnson.nightmare.Object;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.World;
-
-import java.util.ArrayList;
+import com.niklasnson.nightmare.Assets;
+import com.niklasnson.nightmare.Constants;
 
 public class FemaleZombie extends Enemy {
 
@@ -37,14 +36,20 @@ public class FemaleZombie extends Enemy {
     ATTACK, DEAD, IDLE, WALK
   }
 
-  private World world;
-  private Body body;
+  private World         world;
+  private Body          body;
 
-  private Action action;
-  private int animationFrame = 0;
+  private Action        action;
+  private int           animationFrame = 0;
 
-  private int counter = 0;
+  private int           counter = 0;
 
+  /**
+   * Default constructor
+   * @param world
+   * @param x
+   * @param y
+   */
   public FemaleZombie (World world, float x, float y) {
     this.world = world;
     this.action = Action.IDLE;
@@ -52,6 +57,10 @@ public class FemaleZombie extends Enemy {
     setPosition(x, y);
   }
 
+  /**
+   * Draw zombie on screen
+   * @param spriteBatch
+   */
   public void draw(SpriteBatch spriteBatch) {
     if (action == Action.ATTACK) {
       spriteBatch.draw(Assets.femaleZombieAnimations.get(0 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
@@ -98,6 +107,10 @@ public class FemaleZombie extends Enemy {
     }
   }
 
+  /**
+   * Set action on zombie
+   * @param value
+   */
   public void setAction (int value) {
     if (value == 0)
       action = Action.ATTACK;

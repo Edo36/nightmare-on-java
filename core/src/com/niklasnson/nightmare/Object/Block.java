@@ -22,61 +22,62 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare;
+package com.niklasnson.nightmare.Object;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 
-public class Tile extends Sprite {
-  protected enum Type {
-    Tile1, Tile2, Tile3, Tile4, Tile5, Tile6, Tile7, Tile8,
-    Tile9, Tile10, Tile11, Tile12, Tile13, Tile14, Tile15,
-    Tile16
+public class Block {
+
+  private TextureAtlas          textureAtlas;
+  private Sprite                sprite;
+
+  public Block () {
+    this.textureAtlas = new TextureAtlas("Map/tiles.atlas");
   }
 
-  private World world;
-  private Body body;
-  private Type type;
-
-  public Tile (World world, float x, float y) {
-    this.world = world;
-    this.type = Type.Tile1;
-    setSize(Constants.tile_width, Constants.tile_height);
-    setPosition(x,y);
-    createBody();
-  }
-
-  void createBody() {
+  /**
+   * Create a body on the tile/block
+   * @param world
+   * @param x
+   * @param y
+   */
+  public void createBody (World world, int x, int y) {
     BodyDef bodyDef = new BodyDef();
-
     bodyDef.type = BodyDef.BodyType.StaticBody;
-    bodyDef.position.set(getX() / Constants.ppm, getY() / Constants.ppm);
 
-    body = world.createBody(bodyDef);
-    body.setFixedRotation(true);
+    int posX = (x > 0) ? x*32 : x;
+    int posY = (y > 0) ? y*32 : y;
 
+    Gdx.app.log("[Block]", "createBody [" + posX + "||" + posY + "]");
+
+    bodyDef.position.set(
+        posX,
+        posY
+    );
+    Body body = world.createBody(bodyDef);
     PolygonShape shape = new PolygonShape();
-    shape.setAsBox((getWidth() / 2f - 20f) / Constants.ppm,
-        (getHeight() / 2f) / Constants.ppm);
+
+    Vector2 pos = new Vector2(16, 16);
+
+    shape.setAsBox(
+        16,
+        16,
+        pos,
+        0
+    );
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
+    fixtureDef.friction = 1f;
     fixtureDef.density = 0f;
-    fixtureDef.friction = 2f;
-    //fixtureDef.filter.categoryBits = GameInfo.PLAYER;
-    //fixtureDef.filter.maskBits = GameInfo.DEFAULT | GameInfo.COLLECTABLE;
 
     Fixture fixture = body.createFixture(fixtureDef);
-    fixture.setUserData("Tile");
+    fixture.setUserData("Block");
 
     shape.dispose();
-  }
-
-  public void draw (SpriteBatch spriteBatch) {
-    System.out.println("foo");
-    if (type == Type.Tile1)
-      System.out.println("bar");
-      spriteBatch.draw(Assets.staticTiles.get(15), this.getX(), this.getY(), this.getWidth(), this.getHeight());
   }
 }

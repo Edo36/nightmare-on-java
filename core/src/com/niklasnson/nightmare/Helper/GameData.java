@@ -22,8 +22,42 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.helpers;
+package com.niklasnson.nightmare.Helper;
 
-public class Graphics {
+public class GameData {
 
+  private int               highscore;
+  private boolean           musicOn;
+
+  /**
+   * Get highscore
+   * @return
+   */
+  public int getHighscore() {
+    return highscore;
+  }
+
+  /**
+   * Set highscore
+   * @param highscore
+   */
+  public void setHighscore(int highscore) {
+    this.highscore = highscore;
+  }
+
+  /**
+   * Is music enabled
+   * @return
+   */
+  public boolean isMusicOn() {
+    return musicOn;
+  }
+
+  /**
+   * Set music enabled
+   * @param musicOn
+   */
+  public void setMusicOn(boolean musicOn) {
+    this.musicOn = musicOn;
+  }
 }

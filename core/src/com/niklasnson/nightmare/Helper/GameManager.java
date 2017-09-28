@@ -22,21 +22,59 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.Objects;
+package com.niklasnson.nightmare.Helper;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.utils.Base64Coder;
+import com.badlogic.gdx.utils.Json;
 
-public class WorldUtils {
+public class GameManager {
 
-  public static final Vector2 gravity = new Vector2(0, -9.8f);
+  private static GameManager ourInstance = new GameManager();
+  public  GameData gameData;
+  private Json json = new Json();
+  private FileHandle fileHandle = Gdx.files.local("Data/GameData.json");
 
   /**
    * Default constructor
-   * @return
    */
-  public static World createWorld () {
-    return new World(gravity, true);
+  private GameManager() {}
+
+  /**
+   * Initialize game data
+   */
+  public void initializeGameData() {
+    if (!fileHandle.exists()) {
+      gameData = new com.niklasnson.nightmare.Helper.GameData();
+
+      gameData.setHighscore(0);
+      gameData.setMusicOn(false);
+
+      saveData();
+    } else {
+      loadData();
+    }
   }
 
+  /**
+   * Save data to file
+   */
+  public void saveData() {
+    if (gameData != null) {
+      fileHandle.writeString(Base64Coder.encodeString(json.prettyPrint(gameData)),
+          false);
+    }
+  }
+
+  /**
+   * Load data from file
+   */
+  public void loadData() {
+    gameData = json.fromJson(GameData.class,
+        Base64Coder.decodeString(fileHandle.readString()));
+  }
+    public static GameManager getInstance() {
+    return ourInstance;
+  }
 }

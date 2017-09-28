@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.Objects;
+package com.niklasnson.nightmare.Object;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

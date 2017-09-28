@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.Screens;
+package com.niklasnson.nightmare.Screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -37,9 +37,9 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.niklasnson.nightmare.Constants;
 import com.niklasnson.nightmare.GameMain;
-import com.niklasnson.nightmare.Objects.Map;
-import com.niklasnson.nightmare.Objects.Player;
-import com.niklasnson.nightmare.Objects.WorldUtils;
+import com.niklasnson.nightmare.Object.Map;
+import com.niklasnson.nightmare.Object.Player;
+import com.niklasnson.nightmare.Object.WorldUtils;
 
 public class GameScreen implements Screen {
 

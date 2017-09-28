@@ -22,26 +22,48 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.helpers;
+package com.niklasnson.nightmare.Object;
 
-public class GameData {
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.physics.box2d.World;
 
-  private int highscore;
-    private boolean musicOn;
+public abstract class Enemy extends Sprite {
 
-  public int getHighscore() {
-    return highscore;
+  public enum EnemyType {
+    FemaleZombie, MaleZombie, PumpKing
   }
 
-  public void setHighscore(int highscore) {
-    this.highscore = highscore;
+  /**
+   * Default constructor
+   * @param enemyType
+   * @param world
+   * @param x
+   * @param y
+   * @return
+   */
+  public static Enemy createEnemy (EnemyType enemyType, World world, int x, int y) {
+    Enemy enemy = null;
+
+    switch (enemyType) {
+      case FemaleZombie:
+        enemy = new FemaleZombie(world, x, y);
+        return enemy;
+      default:
+        return enemy;
+    }
   }
 
-  public boolean isMusicOn() {
-    return musicOn;
-  }
+  /**
+   *
+   * @param spriteBatch
+   */
+  public abstract void draw (SpriteBatch spriteBatch);
 
-  public void setMusicOn(boolean musicOn) {
-    this.musicOn = musicOn;
-  }
+  /**
+   *
+   * @param value
+   */
+  public abstract void setAction (int value);
+
 }

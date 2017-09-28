@@ -26,9 +26,8 @@ package com.niklasnson.nightmare;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.niklasnson.nightmare.Screens.GameScreen;
-import com.niklasnson.nightmare.Screens.MainMenuScreen;
-import com.niklasnson.nightmare.helpers.GameManager;
+import com.niklasnson.nightmare.Screen.GameScreen;
+import com.niklasnson.nightmare.Helper.GameManager;
 
 public class GameMain extends Game {
 	private SpriteBatch batch;

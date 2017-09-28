@@ -29,7 +29,10 @@ public class Constants {
   public static final int width = 800;
   public static final int height = 480;
 
-  public static final int ppm = 100;
+  public static final short filterDefault = 1;
+  public static final short filterPlayer = 2;
+
+  public static final int ppm = 1;
 
   public static final int female_zombie_width = 80;
   public static final int female_zombie_height = 80;
@@ -40,8 +43,8 @@ public class Constants {
   public static final int pump_king_width = 80;
   public static final int pump_king_height = 80;
 
-  public static final int player_width = 70;
-  public static final int player_height = 70;
+  public static final int player_width = 48;
+  public static final int player_height = 48;
 
   public static final int tile_width = 32;
   public static final int tile_height = 32;
@@ -56,6 +59,11 @@ public class Constants {
   public static final float ground_width = (float)width;
   public static final float ground_height = 0.5f;
   public static final float ground_density = 0f;
+
+  public static final int backgroundImageWidth = 800;
+  public static final int backgroundImageHeight = 400;
+
+  public static final int environmentLayer = 1;
 
   public static final String title = "My nightmare, it all stems from childhood";
   public static final String press_to_start = "INSERT COIN TO CONTINUE";
