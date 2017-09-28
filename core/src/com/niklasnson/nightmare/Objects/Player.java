@@ -22,12 +22,13 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare;
+package com.niklasnson.nightmare.Objects;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.physics.box2d.*;
+import com.niklasnson.nightmare.Assets;
+import com.niklasnson.nightmare.Constants;
 
 
 public class Player extends Sprite{
@@ -36,30 +37,38 @@ public class Player extends Sprite{
     DEAD, IDLE, JUMP, RUN, WALK
   }
 
-  private World world;
-  private Body body;
-  private Action action;
+  private World         world;
+  private Body          body;
+  private Action        action;
 
-  private int animationFrame = 0;
+  private int           animationFrame = 0;
 
-  private int counter = 0;
+  private int           counter = 0;
 
-   public Player (World world, float x, float y) {
-     this.world = world;
+  /**
+   *
+   * @param world
+   * @param x
+   * @param y
+   */
+  public Player (World world, float x, float y) {
+    this.world = world;
 
-     this.action = Action.IDLE;
+    this.action = Action.IDLE;
 
-     setSize(
-         Constants.player_width,
-         Constants.player_height
-     );
+    setSize(
+        Constants.player_width,
+        Constants.player_height);
 
-     setPosition(x, y);
+    setPosition(x, y);
 
-     createBody();
+    createBody();
   }
 
-    void createBody() {
+  /**
+   * Create a body for player
+   */
+  void createBody () {
     BodyDef bodyDef = new BodyDef();
 
     bodyDef.type = BodyDef.BodyType.DynamicBody;
@@ -76,8 +85,8 @@ public class Player extends Sprite{
     PolygonShape shape = new PolygonShape();
 
     shape.setAsBox(
-        (getWidth()/2f)/Constants.ppm,
-        (getHeight()/2f)/Constants.ppm
+        (getWidth() / 2f) / Constants.ppm,
+        (getHeight() / 2f) / Constants.ppm
     );
 
     FixtureDef fixtureDef = new FixtureDef();
@@ -91,12 +100,16 @@ public class Player extends Sprite{
     fixture.setUserData("Player");
 
     shape.dispose();
-   }
+  }
 
-  public void draw(SpriteBatch spriteBatch) {
+  /**
+   * Draw player on screen
+   * @param spriteBatch
+   */
+  public void draw (SpriteBatch spriteBatch) {
 
-    float playerX = this.getX() - this.getWidth()/2;
-    float playerY = this.getY() - this.getHeight()/2;
+    float playerX = this.getX() - this.getWidth() / 2;
+    float playerY = this.getY() - this.getHeight() / 2;
     float playerH = this.getHeight();
     float playerW = this.getWidth();
 
@@ -154,16 +167,37 @@ public class Player extends Sprite{
         }
       }
     }
-
   }
 
-  public void updatePlayer() {
-     this.setPosition(
-         body.getPosition().x * Constants.ppm,
-         body.getPosition().y * Constants.ppm
-     );
+  /**
+   * Update the player
+   */
+  public void updatePlayer () {
+    if (body.getLinearVelocity().x > 0) {
+      setPosition(body.getPosition().x * Constants.ppm, body.getPosition().y * Constants.ppm);
+    } else if (body.getLinearVelocity().x < 0) {
+      setPosition((body.getPosition().x) * Constants.ppm,
+          body.getPosition().y * Constants.ppm);
+    }
   }
 
+  /**
+   * Move the player
+   * @param x
+   */
+  public void movePlayer (float x) {
+    if (x < 0 && !this.isFlipX()) {
+      this.flip(true, false);
+    } else if (x > 0 && this.isFlipX()) {
+      this.flip(true, false);
+    }
+    body.setLinearVelocity(x, body.getLinearVelocity().y);
+  }
+
+  /**
+   * Set action for player
+   * @param value
+   */
   public void setAction (int value) {
     if (value == 0)
       action = Action.DEAD;
@@ -181,8 +215,12 @@ public class Player extends Sprite{
       action = Action.WALK;
   }
 
+  /**
+   * Get action for player
+   * @return
+   */
   public Action getAction () {
-     return this.action;
+    return this.action;
   }
 
 }
