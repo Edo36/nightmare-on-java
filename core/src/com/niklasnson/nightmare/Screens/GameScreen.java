@@ -57,7 +57,11 @@ public class GameScreen implements Screen {
 
   private int level = 1;
 
-   public GameScreen (GameMain game) {
+  /**
+   * Default constructor
+   * @param game
+   */
+  public GameScreen (GameMain game) {
     this.game = game;
 
     this.world = WorldUtils.createWorld();
@@ -71,6 +75,9 @@ public class GameScreen implements Screen {
     initializePlayer(10, 10);
   }
 
+  /**
+   * Initialize the camera
+   */
   private void initializeCamera () {
     camera = new OrthographicCamera(
         Constants.width,
