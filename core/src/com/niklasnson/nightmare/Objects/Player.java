@@ -46,7 +46,7 @@ public class Player extends Sprite{
   private int           counter = 0;
 
   /**
-   *
+   * Default constructor
    * @param world
    * @param x
    * @param y
