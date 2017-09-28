@@ -114,7 +114,7 @@ public class GameScreen implements Screen {
         32,
         64+(Constants.player_height/2)
     );
-    player.setAction(1);
+    player.setAction(2);
   }
 
   /**
