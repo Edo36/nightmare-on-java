@@ -107,7 +107,7 @@ public class Map {
    */
   public void drawBackgroundLayer () {
     batch.draw(
-        Assets.background,
+        Assets.getBackground(),
         (camera.position.x - (Constants.BACKGROUND_IMAGE_WIDTH /2)),
         0,
         Constants.SCREEN_WIDTH,
