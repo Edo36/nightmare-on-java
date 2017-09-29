@@ -25,23 +25,40 @@
 package com.niklasnson.nightmare;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.niklasnson.nightmare.Screen.GameScreen;
 import com.niklasnson.nightmare.Helper.GameManager;
 
 public class GameMain extends Game {
+
 	private SpriteBatch batch;
 
+	/**
+	 *
+	 */
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-    GameManager.getInstance().initializeGameData();
-    Assets.initialize();
+
+		Gdx.app.log("[GameMain]", "new SpriteBatch");
+		GameManager.getInstance().initializeGameData();
+
+		Assets.initialize();
+		Gdx.app.log("[GameMain]", "assets should be loaded");
+
 		setScreen(new GameScreen(this));
 	}
 
+	/**
+	 *
+	 */
 	@Override
 	public void render () { super.render(); }
 
+	/**
+	 *
+	 * @return spriteBatch
+	 */
   public SpriteBatch getBatch () { return this.batch; }
 }
