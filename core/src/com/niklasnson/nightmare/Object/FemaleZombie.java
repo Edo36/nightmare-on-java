@@ -62,49 +62,6 @@ public class FemaleZombie extends Enemy {
    * @param spriteBatch
    */
   public void draw(SpriteBatch spriteBatch) {
-    if (action == Action.ATTACK) {
-      spriteBatch.draw(Assets.femaleZombieAnimations.get(0 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-      counter++;
-      if (counter % Constants.female_zombie_phase == 0) {
-        animationFrame++;
-        if (animationFrame == 8) {
-          animationFrame = 0;
-        }
-      }
-    }
-
-    if (action == Action.DEAD) {
-      spriteBatch.draw(Assets.femaleZombieAnimations.get(7 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-      counter++;
-      if (counter % Constants.female_zombie_phase == 0) {
-        animationFrame++;
-        if (animationFrame == 12) {
-          animationFrame = 0;
-        }
-      }
-    }
-
-    if (action == Action.IDLE) {
-      spriteBatch.draw(Assets.femaleZombieAnimations.get(20 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-      counter++;
-      if (counter % Constants.female_zombie_phase == 0) {
-        animationFrame++;
-        if (animationFrame == 15) {
-          animationFrame = 0;
-        }
-      }
-    }
-
-    if (action == Action.WALK) {
-      spriteBatch.draw(Assets.femaleZombieAnimations.get(35 + animationFrame), this.getX(), this.getY(), this.getWidth(), this.getHeight());
-      counter++;
-      if (counter % Constants.female_zombie_phase == 0) {
-        animationFrame++;
-        if (animationFrame == 10) {
-          animationFrame = 0;
-        }
-      }
-    }
   }
 
   /**
