@@ -81,10 +81,6 @@ public class Map {
       for (int col = 0; col < foregroundLayer.getWidth(); col++) {
         TiledMapTileLayer.Cell cell = foregroundLayer.getCell(col, row);
         if (cell != null && cell.getTile() != null) {
-          //final int tileCol = col;
-          //final int tileRow = row;
-          TiledMapTile tile = cell.getTile();
-
           Block block = new Block();
           block.createBody(world, col, row);
         }
