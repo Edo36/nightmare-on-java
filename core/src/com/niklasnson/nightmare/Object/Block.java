@@ -49,16 +49,18 @@ public class Block {
     BodyDef bodyDef = new BodyDef();
     bodyDef.type = BodyDef.BodyType.StaticBody;
 
-    int posX = (x > 0) ? x*32 : x;
+    int posX = (x > 0) ? x*32 : x;  // calculate the width and hight of the block.
     int posY = (y > 0) ? y*32 : y;
 
-    Gdx.app.log("[Block]", "createBody [" + posX + "||" + posY + "]");
+    Gdx.app.log("[Block]", "createBody \t( x:" + posX + "\t y:" + posY + " )");
 
     bodyDef.position.set(
         posX,
         posY
     );
+
     Body body = world.createBody(bodyDef);
+
     PolygonShape shape = new PolygonShape();
 
     Vector2 pos = new Vector2(16, 16);
