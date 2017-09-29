@@ -26,14 +26,15 @@ package com.niklasnson.nightmare.Object;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.niklasnson.nightmare.Constants;
 
 public class WorldUtils {
 
-  public static final Vector2 gravity = new Vector2(0, -9.8f);
+  public static final Vector2 gravity = new Vector2(0, Constants.GRAVITY);
 
   /**
    * Default constructor
-   * @return
+   * @return world
    */
   public static World createWorld () {
     return new World(gravity, true);
