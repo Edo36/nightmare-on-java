@@ -25,49 +25,60 @@
 package com.niklasnson.nightmare;
 
 public class Constants {
-  // Game screen settings
-  public static final int width = 800;
-  public static final int height = 480;
+
+  /**
+   * Gravity in world
+   */
+  public static final float GRAVITY = -9.8f;
+
+  /**
+   * World timers
+    */
+  public static final float TIME_STEP = 1 / 300f;
+  public static final int POSITION_ITERATIONS = 3;
+  public static final int VELOCITY_ITERATIONS = 8;
+
+  /**
+   * Height and width of window
+   */
+  public static final int SCREEN_WIDTH = 800;
+  public static final int SCREEN_HEIGHT = 480;
+
+  /**
+   * Pixel per meter
+   */
+  public static final int PPM = 1;
+
+  /**
+   * Background image properties
+   */
+  public static final int BACKGROUND_IMAGE_WIDTH = 800;
 
   public static final short filterDefault = 1;
   public static final short filterPlayer = 2;
 
-  public static final int ppm = 1;
-
   public static final int female_zombie_width = 80;
   public static final int female_zombie_height = 80;
 
-  public static final int male_zombie_width = 80;
-  public static final int male_zombie_height = 80;
-
-  public static final int pump_king_width = 80;
-  public static final int pump_king_height = 80;
-
-  public static final int player_width = 48;
+  public static final int player_width = 44;
   public static final int player_height = 48;
 
   public static final int tile_width = 32;
   public static final int tile_height = 32;
 
   public static final int female_zombie_phase = 15;
-  public static final int male_zombie_phase = 15;
-  public static final int pump_king_phase = 10;
   public static final int player_phase = 4;
 
-  public static final float ground_x = 0;
-  public static final float ground_y = 0;
-  public static final float ground_width = (float)width;
-  public static final float ground_height = 0.5f;
-  public static final float ground_density = 0f;
 
-  public static final int backgroundImageWidth = 800;
-  public static final int backgroundImageHeight = 400;
-
-  public static final int environmentLayer = 1;
-
+  /**
+   * Strings used in game
+   */
   public static final String title = "My nightmare, it all stems from childhood";
   public static final String press_to_start = "INSERT COIN TO CONTINUE";
   public static final String game_over = "GAME OVER";
 
-  public static final boolean dev_mode = true;
+  /**
+   * Logs and debug prints.
+   */
+  public static final boolean DEV_MODE = true;
 }
