@@ -58,9 +58,9 @@ public class Map {
 
   /**
    * Initialize the Map
-   * @param level
-   * @param camera
-   * @param batch
+   * @param level level
+   * @param camera camera
+   * @param batch batch
    */
   private void initialize (int level, OrthographicCamera camera, SpriteBatch batch) {
     Gdx.app.log("[Map]", "initialize level " + level);
@@ -74,15 +74,15 @@ public class Map {
 
   /**
    * Initialize tiles on screen
-   * @param world
+   * @param world world
    */
   public void initalizeTiles (World world) {
     for (int row = 0; row < foregroundLayer.getHeight(); row++) {
       for (int col = 0; col < foregroundLayer.getWidth(); col++) {
         TiledMapTileLayer.Cell cell = foregroundLayer.getCell(col, row);
         if (cell != null && cell.getTile() != null) {
-          final int tileCol = col;
-          final int tileRow = row;
+          //final int tileCol = col;
+          //final int tileRow = row;
           TiledMapTile tile = cell.getTile();
 
           Block block = new Block();
@@ -112,10 +112,10 @@ public class Map {
   public void drawBackgroundLayer () {
     batch.draw(
         Assets.background,
-        (camera.position.x - (Constants.backgroundImageWidth/2)),
+        (camera.position.x - (Constants.BACKGROUND_IMAGE_WIDTH /2)),
         0,
-        Constants.width,
-        Constants.height
+        Constants.SCREEN_WIDTH,
+        Constants.SCREEN_HEIGHT
     );
   }
 
