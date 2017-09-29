@@ -24,12 +24,10 @@
 
 package com.niklasnson.nightmare.Object;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
-import com.niklasnson.nightmare.Assets;
 import com.niklasnson.nightmare.Constants;
 
 
@@ -43,8 +41,9 @@ public class Player extends Sprite{
   private World             world;
   private Body              body;
   private Action            action;
-
-  private TextureAtlas      playerAtlas;
+  private float             elapsedTime;
+  private Animation         animation;
+  private TextureAtlas      spriteSheet;
   private Array<Sprite>     playerIdle = new Array<Sprite>();
   private Array<Sprite>     playerJump = new Array<Sprite>();
   private Array<Sprite>     playerRun = new Array<Sprite>();
@@ -55,9 +54,9 @@ public class Player extends Sprite{
 
   /**
    * Default constructor
-   * @param world
-   * @param x
-   * @param y
+   * @param world world
+   * @param x x
+   * @param y y
    */
   public Player (World world, float x, float y) {
     this.world = world;
@@ -79,14 +78,17 @@ public class Player extends Sprite{
    * Create the animation vectors
    */
   void initializeAnimations () {
-    TextureAtlas spriteSheet = new TextureAtlas("player.txt");
+    spriteSheet = new TextureAtlas("player.atlas");
 
     for (int i = 1; i <= 16; i++) { playerIdle.add(spriteSheet.createSprite("Idle (" + i + ")")); }
+
     for (int i = 1; i <= 30; i++) { playerJump.add(spriteSheet.createSprite("Jump (" + i + ")")); }
+
     for (int i = 1; i <= 20; i++) { playerRun.add(spriteSheet.createSprite("Run (" + i + ")")); }
+
     for (int i = 1; i <= 20; i++) { playerWalk.add(spriteSheet.createSprite("Walk (" + i + ")")); }
 
-    //spriteSheet.dispose();
+    Gdx.app.log("[Player]", "animations loaded");
   }
 
   /**
@@ -98,9 +100,12 @@ public class Player extends Sprite{
     bodyDef.type = BodyDef.BodyType.DynamicBody;
 
     bodyDef.position.set(
-        getX() / Constants.ppm,
-        getY() / Constants.ppm
+        getX() / Constants.PPM,
+        getY() / Constants.PPM
     );
+
+    System.out.println("getWidth()  :" + getWidth());
+    System.out.println("getHeight() :" + getHeight());
 
     body = world.createBody(bodyDef);
 
@@ -109,13 +114,13 @@ public class Player extends Sprite{
     PolygonShape shape = new PolygonShape();
 
     shape.setAsBox(
-        (getWidth() / 2f) / Constants.ppm,
-        (getHeight() / 2f) / Constants.ppm
+        (getWidth()/2f) / Constants.PPM,
+        (getHeight()/2f) / Constants.PPM
     );
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.friction = 1f;
+    fixtureDef.friction = 2f;
     fixtureDef.density = 0f;
     fixtureDef.filter.categoryBits = Constants.filterPlayer;
     fixtureDef.filter.maskBits = Constants.filterDefault;
@@ -127,8 +132,29 @@ public class Player extends Sprite{
   }
 
   /**
+   * Draw player animation on screen
+   * @param spriteBatch spriteBatch
+   */
+  public void renderPlayer (SpriteBatch spriteBatch) {
+    elapsedTime += Gdx.graphics.getDeltaTime();
+
+    float playerX = this.getX() - this.getWidth() / 2;
+    float playerY = this.getY() - this.getHeight() / 2;
+
+    spriteBatch.draw(playerIdle.get(animationFrame), playerX, playerY);
+    counter++;
+    if (counter % 10 == 0) {
+      Gdx.app.log("[Player]", "(renderPlayer) animationFrame :" + animationFrame);
+      animationFrame++;
+      if (animationFrame == 16) {
+        animationFrame = 0;
+      }
+    }
+  }
+
+  /**
    * Draw player on screen
-   * @param spriteBatch
+   * @param spriteBatch spriteBash
    */
   public void draw (SpriteBatch spriteBatch) {
 
@@ -161,7 +187,6 @@ public class Player extends Sprite{
 
     if (action == Action.RUN) {
       spriteBatch.draw(playerRun.get(animationFrame), playerX, playerY,playerW, playerH);
-      spriteBatch.draw(Assets.playerAnimations.get(75 + animationFrame), playerX, playerY, playerW, playerH);
       counter++;
       if (counter % Constants.player_phase == 0) {
         animationFrame++;
@@ -188,16 +213,16 @@ public class Player extends Sprite{
    */
   public void updatePlayer () {
     if (body.getLinearVelocity().x > 0) {
-      setPosition(body.getPosition().x * Constants.ppm, body.getPosition().y * Constants.ppm);
+      setPosition(body.getPosition().x * Constants.PPM, body.getPosition().y * Constants.PPM);
     } else if (body.getLinearVelocity().x < 0) {
-      setPosition((body.getPosition().x) * Constants.ppm,
-          body.getPosition().y * Constants.ppm);
+      setPosition((body.getPosition().x) * Constants.PPM,
+          body.getPosition().y * Constants.PPM);
     }
   }
 
   /**
    * Move the player
-   * @param x
+   * @param x x
    */
   public void movePlayer (float x) {
     if (x < 0 && !this.isFlipX()) {
@@ -210,25 +235,26 @@ public class Player extends Sprite{
 
   /**
    * Set action for player
-   * @param value
+   * @param value value
    */
   public void setAction (int value) {
     if (value == 0)
+      Gdx.app.log("[Player]", "(action) is idle");
       action = Action.IDLE;
-
     if (value == 1)
+      Gdx.app.log("[Player]", "(action) is jumping");
       action = Action.JUMP;
-
     if (value == 2)
+      Gdx.app.log("[Player]", "(action) is running");
       action = Action.RUN;
-
     if (value == 3)
+      Gdx.app.log("[Player]", "(action) is walking");
       action = Action.WALK;
   }
 
   /**
    * Get action for player
-   * @return
+   * @return action
    */
   public Action getAction () {
     return this.action;
