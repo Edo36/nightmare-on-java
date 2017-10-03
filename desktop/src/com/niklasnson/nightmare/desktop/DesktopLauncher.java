@@ -34,8 +34,8 @@ public class DesktopLauncher {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 
 		// Config variables from Constants class.
-		config.width = Constants.width;
-		config.height = Constants.height;
+		config.width = Constants.SCREEN_WIDTH;
+		config.height = Constants.SCREEN_HEIGHT;
 		config.title = Constants.title;
 
 		new LwjglApplication(new GameMain(), config);

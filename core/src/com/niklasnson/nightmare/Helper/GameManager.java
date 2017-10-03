@@ -42,15 +42,16 @@ public class GameManager {
   private GameManager() {}
 
   /**
-   * Initialize game data
+   * Initialize game data, will only run if no file exists
    */
   public void initializeGameData() {
     if (!fileHandle.exists()) {
       gameData = new com.niklasnson.nightmare.Helper.GameData();
-
+      Gdx.app.log("[GameManager]", "initializeGameData()");
       gameData.setHighscore(0);
+      Gdx.app.log("[GameManager]", "setting Highscore");
       gameData.setMusicOn(false);
-
+      Gdx.app.log("[GameManager]", "setting Music");
       saveData();
     } else {
       loadData();
@@ -62,6 +63,7 @@ public class GameManager {
    */
   public void saveData() {
     if (gameData != null) {
+      Gdx.app.log("[GameManager]", "saveData()");
       fileHandle.writeString(Base64Coder.encodeString(json.prettyPrint(gameData)),
           false);
     }
@@ -71,6 +73,7 @@ public class GameManager {
    * Load data from file
    */
   public void loadData() {
+    Gdx.app.log("[GameManager]", "loadData()");
     gameData = json.fromJson(GameData.class,
         Base64Coder.decodeString(fileHandle.readString()));
   }

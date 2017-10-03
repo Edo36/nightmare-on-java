@@ -135,7 +135,7 @@ public class Player extends Sprite{
    * Draw player animation on screen
    * @param spriteBatch spriteBatch
    */
-  public void renderPlayer (SpriteBatch spriteBatch) {
+  public void draw (SpriteBatch spriteBatch) {
     elapsedTime += Gdx.graphics.getDeltaTime();
 
     float playerX = this.getX() - this.getWidth() / 2;
@@ -156,7 +156,7 @@ public class Player extends Sprite{
    * Draw player on screen
    * @param spriteBatch spriteBash
    */
-  public void draw (SpriteBatch spriteBatch) {
+/*  public void draw (SpriteBatch spriteBatch) {
 
     float playerX = this.getX() - this.getWidth() / 2;
     float playerY = this.getY() - this.getHeight() / 2;
@@ -206,7 +206,7 @@ public class Player extends Sprite{
         }
       }
     }
-  }
+  }*/
 
   /**
    * Update the player
