@@ -55,6 +55,8 @@ public class GameScreen implements Screen {
   private Box2DDebugRenderer  renderer;
   private Viewport            viewport;
 
+  private float               accumulator;
+
   private int level = 1;
 
   /**
@@ -72,7 +74,7 @@ public class GameScreen implements Screen {
 
     initializeLevel(level, camera, game.getBatch());
 
-    initializePlayer(10, 10);
+    initializePlayer();
   }
 
   /**
@@ -80,22 +82,22 @@ public class GameScreen implements Screen {
    */
   private void initializeCamera () {
     camera = new OrthographicCamera(
-        Constants.width,
-        Constants.height);
+        Constants.SCREEN_WIDTH / Constants.PPM,
+        Constants.SCREEN_HEIGHT / Constants.PPM);
 
     camera.setToOrtho(
         false,
-        Constants.width / Constants.ppm,
-        Constants.height / Constants.ppm);
+        Constants.SCREEN_WIDTH / Constants.PPM,
+        Constants.SCREEN_HEIGHT / Constants.PPM);
 
     camera.position.set(
-        Constants.width/2f,
-        Constants.height/2f,
+        Constants.SCREEN_WIDTH /2f,
+        Constants.SCREEN_HEIGHT /2f,
         0);
 
     viewport = new StretchViewport(
-        Constants.width,
-        Constants.height, camera);
+        Constants.SCREEN_WIDTH,
+        Constants.SCREEN_HEIGHT, camera);
 
     renderer = new Box2DDebugRenderer();
 
@@ -104,17 +106,15 @@ public class GameScreen implements Screen {
 
   /**
    * Create a player on the stage
-   * @param x position of player X
-   * @param y position of player Y
    */
-  private void initializePlayer (float x, float y) {
+  private void initializePlayer () {
     player = new Player(
         world,
-
         32,
         64+(Constants.player_height/2)
     );
-    player.setAction(2);
+
+    player.setAction(0);
   }
 
   /**
@@ -151,9 +151,11 @@ public class GameScreen implements Screen {
    */
   void movePlayer (float delta) {
      if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-       player.movePlayer(-2f);
+       // running or walking?
+       player.movePlayer(-100f);
      } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-       player.movePlayer(2f);
+       // running or walking?
+       player.movePlayer(100f);
      }
   }
 
@@ -166,6 +168,14 @@ public class GameScreen implements Screen {
    */
   @Override
   public void render(float delta) {
+
+    accumulator += Math.min(delta, 0.25f);
+
+    while (accumulator >= Constants.TIME_STEP) {
+      world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
+      accumulator -= Constants.TIME_STEP;
+    }
+
     update(delta);
 
     Gdx.gl.glClearColor(1, 0, 0, 1);
@@ -181,10 +191,12 @@ public class GameScreen implements Screen {
 
     game.getBatch().end();
 
-    renderer.render(
-        world,
-        camera.combined
-    );
+    if (Constants.DEV_MODE) {
+      renderer.render(
+          world,
+          camera.combined
+      );
+    }
 
     camera.update();
 
