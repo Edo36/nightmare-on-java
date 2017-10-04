@@ -25,7 +25,6 @@
 package com.niklasnson.nightmare.Screen;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -81,23 +80,18 @@ public class GameScreen implements Screen {
    * Initialize the camera
    */
   private void initializeCamera () {
-    camera = new OrthographicCamera(
-        Constants.SCREEN_WIDTH / Constants.PPM,
-        Constants.SCREEN_HEIGHT / Constants.PPM);
+    camera = new OrthographicCamera();
 
     camera.setToOrtho(
         false,
-        Constants.SCREEN_WIDTH / Constants.PPM,
-        Constants.SCREEN_HEIGHT / Constants.PPM);
+        Constants.SCREEN_WIDTH,
+        Constants.SCREEN_HEIGHT);
 
-    camera.position.set(
-        Constants.SCREEN_WIDTH /2f,
-        Constants.SCREEN_HEIGHT /2f,
-        0);
+    camera.position.set(Constants.V_WIDTH/2f,Constants.V_HEIGHT/2f, 0);
 
     viewport = new StretchViewport(
-        Constants.SCREEN_WIDTH,
-        Constants.SCREEN_HEIGHT, camera);
+        Constants.V_WIDTH,
+        Constants.V_HEIGHT, camera);
 
     renderer = new Box2DDebugRenderer();
 
@@ -110,11 +104,11 @@ public class GameScreen implements Screen {
   private void initializePlayer () {
     player = new Player(
         world,
-        32,
+        32*7,
         64+(Constants.player_height/2)
     );
 
-    player.setAction(0);
+    player.setCurrentState(0);
   }
 
   /**
@@ -138,11 +132,13 @@ public class GameScreen implements Screen {
   }
 
   /**
+   *
    * Move camera to a new position on screen
    * @param delta
    */
   void moveCamera (float delta) {
-    //camera.translate(15 * delta,0,0);
+    Body body = player.getBody();
+    camera.position.set(body.getPosition().x, Constants.SCREEN_HEIGHT/2f, 0);
   }
 
   /**
@@ -150,12 +146,20 @@ public class GameScreen implements Screen {
    * @param delta
    */
   void movePlayer (float delta) {
-     if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-       // running or walking?
-       player.movePlayer(-100f);
-     } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-       // running or walking?
-       player.movePlayer(100f);
+     if (Gdx.input.isKeyPressed(Constants.KEY_LEFT)) {
+       if (player.getX() > 150) {
+         player.setCurrentState(3);
+         player.setCurrentDirection(2);
+         player.movePlayer(-200f, 0);
+       }
+     } else if (Gdx.input.isKeyPressed(Constants.KEY_RIGHT)) {
+       player.setCurrentState(3);
+       player.setCurrentDirection(3);
+       player.movePlayer(200f, 0);
+     } else if (Gdx.input.isKeyPressed(Constants.KEY_JUMP)) {
+       player.movePlayer( 50f, 100f);
+     } else {
+       player.setCurrentState(0);
      }
   }
 
@@ -169,18 +173,10 @@ public class GameScreen implements Screen {
   @Override
   public void render(float delta) {
 
-    accumulator += Math.min(delta, 0.25f);
-
-    while (accumulator >= Constants.TIME_STEP) {
-      world.step(Constants.TIME_STEP, Constants.VELOCITY_ITERATIONS, Constants.POSITION_ITERATIONS);
-      accumulator -= Constants.TIME_STEP;
-    }
-
-    update(delta);
-
-    Gdx.gl.glClearColor(1, 0, 0, 1);
+    Gdx.gl.glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+    game.getBatch().setProjectionMatrix(camera.combined);
     game.getBatch().begin();
 
     map.drawBackgroundLayer();
@@ -198,17 +194,19 @@ public class GameScreen implements Screen {
       );
     }
 
+    player.updatePlayer();
+
     camera.update();
 
     map.updateCamera();
-
-    player.updatePlayer();
 
     world.step(
         Gdx.graphics.getDeltaTime(),
         6,
         2
     );
+
+    update(delta);
   }
 
   @Override
