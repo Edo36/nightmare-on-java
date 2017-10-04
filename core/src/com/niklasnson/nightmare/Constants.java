@@ -24,12 +24,23 @@
 
 package com.niklasnson.nightmare;
 
+import com.badlogic.gdx.Input;
+
 public class Constants {
+
+  /**
+   * Key mappings
+   */
+
+  public static final int KEY_LEFT = Input.Keys.LEFT;
+  public static final int KEY_RIGHT = Input.Keys.RIGHT;
+  public static final int KEY_JUMP = Input.Keys.UP;
 
   /**
    * Gravity in world
    */
   public static final float GRAVITY = -9.8f;
+  public static final float JUMP_FORCE = 0;
 
   /**
    * World timers
@@ -43,6 +54,9 @@ public class Constants {
    */
   public static final int SCREEN_WIDTH = 800;
   public static final int SCREEN_HEIGHT = 480;
+
+  public static final float V_WIDTH = 20.0f;
+  public static final float V_HEIGHT = 15.0f;
 
   /**
    * Pixel per meter
@@ -80,5 +94,5 @@ public class Constants {
   /**
    * Logs and debug prints.
    */
-  public static final boolean DEV_MODE = true;
+  public static final boolean DEV_MODE = false;
 }
