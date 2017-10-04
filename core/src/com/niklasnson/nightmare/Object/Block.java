@@ -74,8 +74,6 @@ public class Block {
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.friction = 1f;
-    fixtureDef.density = 0f;
 
     Fixture fixture = body.createFixture(fixtureDef);
     fixture.setUserData("Block");
