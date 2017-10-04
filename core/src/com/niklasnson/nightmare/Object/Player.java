@@ -30,18 +30,21 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.niklasnson.nightmare.Constants;
 
-
-
 public class Player extends Sprite{
 
-  protected enum Action {
+  protected enum State {
     IDLE, JUMP, RUN, WALK
+  }
+
+  protected enum Direction {
+    LEFT, RIGHT, UP, DOWN
   }
 
   private World             world;
   private Body              body;
-  private Action            action;
-  private float             elapsedTime;
+  private State             currentState;
+  private Direction         currentDirection;
+  private float             stateTime;
   private Animation         animation;
   private TextureAtlas      spriteSheet;
   private Array<Sprite>     playerIdle = new Array<Sprite>();
@@ -49,8 +52,17 @@ public class Player extends Sprite{
   private Array<Sprite>     playerRun = new Array<Sprite>();
   private Array<Sprite>     playerWalk = new Array<Sprite>();
 
+  private TextureRegion[]   idleTexture;
+  private TextureRegion[]   walkingTexture;
+
+  private Animation         idleAnimation;
+  private Animation         walkingAnimation;
+
   private int               animationFrame = 0;
   private int               counter = 0;
+
+  private boolean           playerWalking = false;
+  private boolean           playerJumping = false;
 
   /**
    * Default constructor
@@ -61,7 +73,7 @@ public class Player extends Sprite{
   public Player (World world, float x, float y) {
     this.world = world;
 
-    this.action = Action.IDLE;
+    this.currentState = State.IDLE;
 
     setSize(
         Constants.player_width,
@@ -72,6 +84,8 @@ public class Player extends Sprite{
     initializeAnimations();
 
     createBody();
+
+    stateTime = 0f;
   }
 
   /**
@@ -79,6 +93,17 @@ public class Player extends Sprite{
    */
   void initializeAnimations () {
     spriteSheet = new TextureAtlas("player.atlas");
+
+    Array<TextureRegion> keyFrames = new Array<TextureRegion>();
+    for (int i = 1; i <= 16; i++) { keyFrames.add(new TextureRegion(spriteSheet.findRegion("Idle (" + i + ")"))); }
+    idleAnimation = new Animation(0.1f, keyFrames);
+    keyFrames.clear();
+
+    for (int i = 1; i <= 20; i++) { keyFrames.add(new TextureRegion(spriteSheet.findRegion("Walk (" + i + ")"))); }
+    walkingAnimation = new Animation(0.1f, keyFrames);
+    keyFrames.clear();
+
+
 
     for (int i = 1; i <= 16; i++) { playerIdle.add(spriteSheet.createSprite("Idle (" + i + ")")); }
 
@@ -114,14 +139,14 @@ public class Player extends Sprite{
     PolygonShape shape = new PolygonShape();
 
     shape.setAsBox(
-        (getWidth()/2f) / Constants.PPM,
-        (getHeight()/2f) / Constants.PPM
+        getWidth()/2f,
+        getHeight()/2f
     );
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.friction = 2f;
-    fixtureDef.density = 0f;
+    fixtureDef.friction = 500f;
+    fixtureDef.restitution = 1f;
     fixtureDef.filter.categoryBits = Constants.filterPlayer;
     fixtureDef.filter.maskBits = Constants.filterDefault;
 
@@ -136,95 +161,50 @@ public class Player extends Sprite{
    * @param spriteBatch spriteBatch
    */
   public void draw (SpriteBatch spriteBatch) {
-    elapsedTime += Gdx.graphics.getDeltaTime();
 
-    float playerX = this.getX() - this.getWidth() / 2;
-    float playerY = this.getY() - this.getHeight() / 2;
+    stateTime += Gdx.graphics.getDeltaTime();
+    TextureRegion currentFrame;
 
-    spriteBatch.draw(playerIdle.get(animationFrame), playerX, playerY);
-    counter++;
-    if (counter % 10 == 0) {
-      Gdx.app.log("[Player]", "(renderPlayer) animationFrame :" + animationFrame);
-      animationFrame++;
-      if (animationFrame == 16) {
-        animationFrame = 0;
+    float playerX = getX()+getWidth()/2f -40f;
+    float playerY = getY()-getWidth()/2f -4f;
+
+    currentFrame = (TextureRegion) idleAnimation.getKeyFrame(stateTime, true);
+
+    if (currentState == State.WALK) {
+      currentFrame = (TextureRegion) walkingAnimation.getKeyFrame(stateTime, true);
+
+      if (currentFrame.isFlipX() && currentDirection == Direction.RIGHT) {
+        currentFrame.flip(true, false);
+      } else if (!currentFrame.isFlipX() && currentDirection == Direction.LEFT) {
+        currentFrame.flip(true, false);
       }
+
+    } else if (currentState == State.JUMP) {
+
+    } else {
+      currentFrame = (TextureRegion) idleAnimation.getKeyFrame(stateTime, true);
     }
+    spriteBatch.draw(currentFrame, playerX, playerY);
+
   }
 
   /**
-   * Draw player on screen
-   * @param spriteBatch spriteBash
-   */
-/*  public void draw (SpriteBatch spriteBatch) {
-
-    float playerX = this.getX() - this.getWidth() / 2;
-    float playerY = this.getY() - this.getHeight() / 2;
-    float playerH = this.getHeight();
-    float playerW = this.getWidth();
-
-    if (action == Action.IDLE) {
-      spriteBatch.draw(playerIdle.get(animationFrame), playerX, playerY);
-      counter++;
-      if (counter % Constants.player_phase == 0) {
-        animationFrame++;
-        if (animationFrame == 16) {
-          animationFrame = 0;
-        }
-      }
-    }
-
-    if (action == Action.JUMP) {
-      spriteBatch.draw(playerJump.get(animationFrame), playerX, playerY,playerW, playerH);
-      counter++;
-      if (counter % Constants.player_phase == 0) {
-        animationFrame++;
-        if (animationFrame == 30) {
-          animationFrame = 0;
-        }
-      }
-    }
-
-    if (action == Action.RUN) {
-      spriteBatch.draw(playerRun.get(animationFrame), playerX, playerY,playerW, playerH);
-      counter++;
-      if (counter % Constants.player_phase == 0) {
-        animationFrame++;
-        if (animationFrame == 20) {
-          animationFrame = 0;
-        }
-      }
-    }
-
-    if (action == Action.WALK) {
-      spriteBatch.draw(playerWalk.get(animationFrame), playerX, playerY,playerW, playerH);
-      counter++;
-      if (counter % Constants.player_phase == 0) {
-        animationFrame++;
-        if (animationFrame == 20) {
-          animationFrame = 0;
-        }
-      }
-    }
-  }*/
-
-  /**
-   * Update the player
+   * Update the player, this is called to set the position of the body.
    */
   public void updatePlayer () {
     if (body.getLinearVelocity().x > 0) {
-      setPosition(body.getPosition().x * Constants.PPM, body.getPosition().y * Constants.PPM);
+      setPosition(body.getPosition().x, body.getPosition().y);
     } else if (body.getLinearVelocity().x < 0) {
-      setPosition((body.getPosition().x) * Constants.PPM,
-          body.getPosition().y * Constants.PPM);
+      setPosition(body.getPosition().x,
+          body.getPosition().y);
     }
   }
 
   /**
-   * Move the player
+   * Move the player, this is
    * @param x x
    */
-  public void movePlayer (float x) {
+  public void movePlayer (float x, float y) {
     if (x < 0 && !this.isFlipX()) {
       this.flip(true, false);
     } else if (x > 0 && this.isFlipX()) {
@@ -237,27 +217,38 @@ public class Player extends Sprite{
    * Set action for player
    * @param value value
    */
-  public void setAction (int value) {
+  public void setCurrentState (int value) {
     if (value == 0)
-      Gdx.app.log("[Player]", "(action) is idle");
-      action = Action.IDLE;
+      currentState = State.IDLE;
     if (value == 1)
-      Gdx.app.log("[Player]", "(action) is jumping");
-      action = Action.JUMP;
+      currentState = State.JUMP;
     if (value == 2)
-      Gdx.app.log("[Player]", "(action) is running");
-      action = Action.RUN;
+      currentState = State.RUN;
     if (value == 3)
-      Gdx.app.log("[Player]", "(action) is walking");
-      action = Action.WALK;
+      currentState = State.WALK;
   }
 
   /**
    * Get action for player
    * @return action
    */
-  public Action getAction () {
-    return this.action;
+  public State getCurrentState() {
+    return this.currentState;
   }
+
+  public Direction getCurrentDirection() { return this.currentDirection; }
+
+  public void setCurrentDirection (int value) {
+    if (value == 0)
+      currentDirection = Direction.DOWN;
+    if (value == 1)
+      currentDirection = Direction.UP;
+    if (value == 2)
+      currentDirection = Direction.LEFT;
+    if (value == 3)
+      currentDirection = Direction.RIGHT;
+  }
+
+  public Body getBody () { return  this.body; }
 
 }
