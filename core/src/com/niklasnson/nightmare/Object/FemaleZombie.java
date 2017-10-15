@@ -24,25 +24,40 @@
 
 package com.niklasnson.nightmare.Object;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.physics.box2d.*;
+import com.badlogic.gdx.utils.Array;
 import com.niklasnson.nightmare.Assets;
 import com.niklasnson.nightmare.Constants;
 
 public class FemaleZombie extends Enemy {
 
-  protected enum Action {
-    ATTACK, DEAD, IDLE, WALK
+  protected enum State {
+    ATTACKING, IDLE, WALKING
   }
 
-  private World         world;
-  private Body          body;
+  public enum Direction {
+    LEFT, RIGHT
+  }
 
-  private Action        action;
-  private int           animationFrame = 0;
+  private World             world;
+  private Body              body;
+  private TextureAtlas      spriteSheet;
 
-  private int           counter = 0;
+  private State             currentState;
+  private Direction         currentDirection;
+  private float             stateTime;
+
+  private Animation         attackAnimation;
+  private Animation         waitingAnimation;
+  private Animation         walkingAnimation;
+
+  private float             leftBound;
+  private float             rightBound;
 
   /**
    * Default constructor
@@ -50,33 +65,123 @@ public class FemaleZombie extends Enemy {
    * @param x
    * @param y
    */
-  public FemaleZombie (World world, float x, float y) {
+  public FemaleZombie (World world, float x, float y, float leftBound, float rightBound) {
+
     this.world = world;
-    this.action = Action.IDLE;
-    setSize(Constants.female_zombie_width, Constants.female_zombie_height);
-    setPosition(x, y);
+
+    this.currentState = State.WALKING;
+
+    this.leftBound = leftBound;
+
+    this.rightBound = rightBound;
+
+    setSize(Constants.FEMALE_ZOMBIE_WIDTH, Constants.FEMALE_ZOMBIE_HEIGHT);
+
+    setPosition(x * Constants.PPM, y * Constants.PPM);
+
+    initializeAnimations();
+
+    createBody();
+
+    currentDirection = Direction.RIGHT;
+
+    stateTime = 0f;
+
+
+  }
+
+  void initializeAnimations () {
+    spriteSheet = new TextureAtlas("fenemy.atlas");
+
+    Array<TextureRegion> keyFrames = new Array<TextureRegion>();
+    for (int i = 1; i <= 15; i++) { keyFrames.add(new TextureRegion(spriteSheet.findRegion("Idle (" + i + ")"))); }
+    waitingAnimation = new Animation(0.1f, keyFrames);
+    keyFrames.clear();
+
+    for (int i = 1; i <= 10; i++) { keyFrames.add(new TextureRegion(spriteSheet.findRegion("Walk (" + i + ")"))); }
+    walkingAnimation = new Animation(0.1f, keyFrames);
+    keyFrames.clear();
+
+    for (int i = 1; i <= 8; i++) { keyFrames.add(new TextureRegion(spriteSheet.findRegion("Attack (" + i + ")"))); }
+    attackAnimation = new Animation(0.1f, keyFrames);
+    keyFrames.clear();
+
+    Gdx.app.log("[FemaleZombie]", "animations loaded");
   }
 
   /**
-   * Draw zombie on screen
-   * @param spriteBatch
+   * Create a body for player
    */
+  void createBody () {
+    BodyDef bodyDef = new BodyDef();
+
+    bodyDef.type = BodyDef.BodyType.DynamicBody;
+
+    bodyDef.position.set(getX() / Constants.PPM, getY() / Constants.PPM);
+
+    body = world.createBody(bodyDef);
+    body.setFixedRotation(true);
+
+    PolygonShape shape = new PolygonShape();
+    shape.setAsBox(Constants.FEMALE_ZOMBIE_WIDTH/2f, Constants.FEMALE_ZOMBIE_HEIGHT/2f); // tweak numbers for sprite layer.
+
+    FixtureDef fixtureDef = new FixtureDef();
+    fixtureDef.shape = shape;
+
+    fixtureDef.density = 0f;
+    fixtureDef.friction = 2f;
+
+    Fixture fixture = body.createFixture(fixtureDef);
+    fixture.setUserData("FemaleZombie");
+
+    shape.dispose();
+  }
+
+
+  @Override
   public void draw(SpriteBatch spriteBatch) {
+    stateTime += Gdx.graphics.getDeltaTime();
+    TextureRegion currentFrame;
+
+    float enemyX = getX();
+    float enemyY = getY()-(getHeight()/2f);
+
+    currentFrame = (TextureRegion) waitingAnimation.getKeyFrame(stateTime, true);
+
+    if (currentState == State.WALKING) {
+      currentFrame = (TextureRegion) walkingAnimation.getKeyFrame(stateTime, true);
+
+      if (currentFrame.isFlipX() && currentDirection == Direction.RIGHT) {
+        currentFrame.flip(true, false);
+      } else if (!currentFrame.isFlipX() && currentDirection == Direction.LEFT) {
+        currentFrame.flip(true, false);
+      }
+    }
+    spriteBatch.draw(currentFrame, enemyX, enemyY);
   }
 
-  /**
-   * Set action on zombie
-   * @param value
-   */
-  public void setAction (int value) {
-    if (value == 0)
-      action = Action.ATTACK;
-    if (value == 1)
-      action = Action.DEAD;
-    if (value == 2)
-      action = Action.IDLE;
-    if (value == 3)
-      action = Action.WALK;
+  @Override
+  public void update (float delta) {
+    float xforce = 15;
+    if (Math.ceil(body.getPosition().x) < rightBound && currentDirection == Direction.RIGHT) {
+      body.setLinearVelocity(xforce, body.getLinearVelocity().y);
+    } else if (Math.ceil(body.getPosition().x) == rightBound) {
+      body.setLinearVelocity(-xforce, body.getLinearVelocity().y);
+      currentDirection = Direction.LEFT;
+    } else if (Math.ceil(body.getPosition().x) > leftBound && currentDirection == Direction.LEFT) {
+      body.setLinearVelocity(-xforce, body.getLinearVelocity().y);
+    } else if (Math.ceil(body.getPosition().x) == leftBound) {
+      body.setLinearVelocity(xforce, body.getLinearVelocity().y);
+      currentDirection = Direction.RIGHT;
+    }
+    setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y);
+  }
+  public void setCurrentState(FemaleZombie.State currentState) {
+    this.currentState = currentState;
+  }
+
+  public FemaleZombie.State getCurrentState () {
+    return this.currentState;
   }
 
 }
