@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="212" height="15" tilewidth="32" tileheight="32" nextobjectid="1">
+<map version="1.0" tiledversion="1.0.3" orientation="orthogonal" renderorder="right-down" width="212" height="15" tilewidth="32" tileheight="32" nextobjectid="20">
  <tileset firstgid="1" source="tiles.tsx"/>
+ <tileset firstgid="17" source="untitled.tsx"/>
  <layer name="Map" width="212" height="15">
   <data encoding="base64" compression="zlib">
-   eJztw7EJAAAIA7CO4v8H+0QXIYEkAAAAAAAAAAAAAPDXqrWj1h5xTA7p
+   eJztzzEKgDAQRcGAImKZ+x9W06WwkAWNG2bglQt/SwEAAAAAAABgZsvVGmwbsBd4Vx09ACZRu4C4ehNEHAmL7s/+t/5dsyes98Wd9KTmBDlyD04=
   </data>
  </layer>
+ <objectgroup name="Objects"/>
 </map>

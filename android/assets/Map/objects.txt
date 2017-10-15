@@ -1,75 +1,26 @@
 objects.png
-size: 32, 255
+size: 94, 32
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
 ArrowSign
   rotate: false
-  xy: 0, 127
+  xy: 0, 0
   size: 31, 32
   orig: 31, 32
-  offset: 0, 0
-  index: -1
-Bush (1)
-  rotate: false
-  xy: 0, 96
-  size: 32, 16
-  orig: 32, 16
-  offset: 0, 0
-  index: -1
-Bush (2)
-  rotate: false
-  xy: 0, 58
-  size: 32, 20
-  orig: 32, 20
   offset: 0, 0
   index: -1
 Crate
   rotate: false
-  xy: 0, 0
+  xy: 31, 0
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
-DeadBush
-  rotate: false
-  xy: 0, 78
-  size: 32, 18
-  orig: 32, 18
-  offset: 0, 0
-  index: -1
 Sign
   rotate: false
-  xy: 0, 159
+  xy: 63, 0
   size: 31, 32
   orig: 31, 32
-  offset: 0, 0
-  index: -1
-Skeleton
-  rotate: false
-  xy: 0, 112
-  size: 32, 15
-  orig: 32, 15
-  offset: 0, 0
-  index: -1
-TombStone (1)
-  rotate: false
-  xy: 0, 191
-  size: 31, 32
-  orig: 31, 32
-  offset: 0, 0
-  index: -1
-TombStone (2)
-  rotate: false
-  xy: 0, 223
-  size: 22, 32
-  orig: 22, 32
-  offset: 0, 0
-  index: -1
-Tree
-  rotate: false
-  xy: 0, 32
-  size: 32, 26
-  orig: 32, 26
   offset: 0, 0
   index: -1
