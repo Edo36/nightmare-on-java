@@ -22,27 +22,39 @@
  * SOFTWARE.
  */
 
-package com.niklasnson.nightmare.Helper;
+package com.niklasnson.nightmare.Hud;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.NinePatch;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.utils.Pool;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.Viewport;
+import com.niklasnson.nightmare.GameMain;
 
-public class SpeechBubble extends Actor implements Pool.Poolable {
+public class SpeechBubble {
 
-  public SpeechBubble (String text) {
-    System.out.println(text);
+  private GameMain      game;
+  private Stage         stage;
+  private Viewport      viewport;
+  private String        textString;
+  private BitmapFont    font = new BitmapFont();
+  private float         posX;
+  private float         posY;
+
+  public SpeechBubble (GameMain game, Viewport viewport, String text, float posX, float posY) {
+    this.game = game;
+    this.viewport = viewport;
+
+    this.stage = new Stage(viewport, game.getBatch());
+    this.textString = text;
+    this.posX = posX;
+    this.posY = posY;
   }
-  
-  public void draw (Batch batch) {
 
+  public void render(float delta) {
+    game.getBatch().begin();
+    final GlyphLayout layout = new GlyphLayout(font, textString);
+    font.draw(game.getBatch(), layout, posX - (layout.width/2), posY);
+    game.getBatch().end();
   }
 
-
-  @Override
-  public void reset() {
-
-  }
 }
