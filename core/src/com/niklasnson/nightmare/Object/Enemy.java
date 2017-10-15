@@ -31,7 +31,8 @@ import com.badlogic.gdx.physics.box2d.World;
 public abstract class Enemy extends Sprite {
 
   public enum EnemyType {
-    FemaleZombie
+    FemaleZombie,
+    MaleZombie
   }
 
   /**
@@ -42,13 +43,15 @@ public abstract class Enemy extends Sprite {
    * @param y
    * @return
    */
-  public static Enemy createEnemy (EnemyType enemyType, World world, int x, int y) {
+  public static Enemy createEnemy (EnemyType enemyType, World world, int x, int y, float lb, float rb) {
     Enemy enemy = null;
 
     switch (enemyType) {
       case FemaleZombie:
-        enemy = new FemaleZombie(world, x, y);
+        enemy = new FemaleZombie(world, x, y, lb, rb);
         return enemy;
+      case MaleZombie:
+        enemy = new MaleZombie(world, x , y, lb, rb);
       default:
         return enemy;
     }
@@ -60,10 +63,6 @@ public abstract class Enemy extends Sprite {
    */
   public abstract void draw (SpriteBatch spriteBatch);
 
-  /**
-   *
-   * @param value
-   */
-  public abstract void setAction (int value);
+  public abstract void update (float delta);
 
 }
