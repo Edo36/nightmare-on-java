@@ -29,6 +29,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.niklasnson.nightmare.Screen.GameScreen;
 import com.niklasnson.nightmare.Helper.GameManager;
+import com.niklasnson.nightmare.Screen.MainMenu;
 
 public class GameMain extends Game {
 
@@ -47,7 +48,7 @@ public class GameMain extends Game {
 		Assets.initialize();
 		Gdx.app.log("[GameMain]", "assets should be loaded");
 
-		setScreen(new GameScreen(this));
+		setScreen(new MainMenu(this));
 	}
 
 	/**
