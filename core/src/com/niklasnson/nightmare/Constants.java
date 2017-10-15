@@ -25,6 +25,7 @@
 package com.niklasnson.nightmare;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Vector2;
 
 public class Constants {
 
@@ -34,20 +35,14 @@ public class Constants {
 
   public static final int KEY_LEFT = Input.Keys.LEFT;
   public static final int KEY_RIGHT = Input.Keys.RIGHT;
-  public static final int KEY_JUMP = Input.Keys.UP;
+  public static final int KEY_JUMP = Input.Keys.SPACE;
+  public static final int KEY_ACCELERATE = Input.Keys.X;
+  public static final int ALT_JUMP = Input.Keys.C;
 
   /**
    * Gravity in world
    */
-  public static final float GRAVITY = -9.8f;
-  public static final float JUMP_FORCE = 0;
-
-  /**
-   * World timers
-    */
-  public static final float TIME_STEP = 1 / 300f;
-  public static final int POSITION_ITERATIONS = 3;
-  public static final int VELOCITY_ITERATIONS = 8;
+  public static final Vector2 GRAVITY = new Vector2(0.0f, -9.8f * 7);
 
   /**
    * Height and width of window
@@ -61,28 +56,24 @@ public class Constants {
   /**
    * Pixel per meter
    */
-  public static final int PPM = 1;
+  public static final int PPM = 32;
+
+  public static final float STEP = 1 / 60.0f;
+  public static float TIMESCALE = 1;
 
   /**
    * Background image properties
    */
   public static final int BACKGROUND_IMAGE_WIDTH = 800;
 
-  public static final short filterDefault = 1;
-  public static final short filterPlayer = 2;
+  public static final int MALE_ZOMBIE_WIDTH = 54;
+  public static final int MALE_ZOMBIE_HEIGHT = 60;
 
-  public static final int female_zombie_width = 80;
-  public static final int female_zombie_height = 80;
+  public static final int FEMALE_ZOMBIE_WIDTH = 54;
+  public static final int FEMALE_ZOMBIE_HEIGHT = 60;
 
-  public static final int player_width = 44;
-  public static final int player_height = 48;
-
-  public static final int tile_width = 32;
-  public static final int tile_height = 32;
-
-  public static final int female_zombie_phase = 15;
-  public static final int player_phase = 4;
-
+  public static final int PLAYER_WIDTH = 44;
+  public static final int PLAYER_HEIGHT = 44;
 
   /**
    * Strings used in game
