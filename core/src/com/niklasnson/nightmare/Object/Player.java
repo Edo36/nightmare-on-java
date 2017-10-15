@@ -25,18 +25,20 @@
 package com.niklasnson.nightmare.Object;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.utils.Array;
 import com.niklasnson.nightmare.Constants;
 
 public class Player extends Sprite{
 
-  protected enum State {
-    IDLE, JUMP, RUN, WALK
+  public enum State {
+    IDLE, JUMPING, RUNNING, WALKING, FALLING, DYING, BRAKING
   }
 
-  protected enum Direction {
+  public enum Direction {
     LEFT, RIGHT, UP, DOWN
   }
 
@@ -45,24 +47,33 @@ public class Player extends Sprite{
   private State             currentState;
   private Direction         currentDirection;
   private float             stateTime;
-  private Animation         animation;
   private TextureAtlas      spriteSheet;
-  private Array<Sprite>     playerIdle = new Array<Sprite>();
-  private Array<Sprite>     playerJump = new Array<Sprite>();
-  private Array<Sprite>     playerRun = new Array<Sprite>();
-  private Array<Sprite>     playerWalk = new Array<Sprite>();
 
-  private TextureRegion[]   idleTexture;
-  private TextureRegion[]   walkingTexture;
+  private final float       normalForce = 20.0f * 10;
+  private final float       normalSpeedMax = 6.0f * 10;
 
-  private Animation         idleAnimation;
+  private final float       fastForce = 36.0f * 10;
+  private final float       fastSpeedMax = 12.0f * 10;
+
+  private float             keyPressedTime;
+
+  private boolean           facingRight;
+
+  private boolean           isDead;
+  private boolean           isLevelCompleted;
+
+  private boolean           grounded;
+  private boolean           die;
+
+  private boolean           smallJump;
+  private boolean           bigJump;
+  private boolean           jump;
+  private boolean           brake;
+
+  private Animation         waitingAnimation;
   private Animation         walkingAnimation;
-
-  private int               animationFrame = 0;
-  private int               counter = 0;
-
-  private boolean           playerWalking = false;
-  private boolean           playerJumping = false;
+  private Animation         jumpingAnimation;
+  private Animation         runningAnimation;
 
   /**
    * Default constructor
@@ -74,18 +85,25 @@ public class Player extends Sprite{
     this.world = world;
 
     this.currentState = State.IDLE;
+    this.smallJump = false;
 
     setSize(
-        Constants.player_width,
-        Constants.player_height);
+        Constants.PLAYER_HEIGHT, Constants.PLAYER_WIDTH);
 
-    setPosition(x, y);
+    setPosition(x * Constants.PPM, y * Constants.PPM);
 
     initializeAnimations();
 
     createBody();
 
     stateTime = 0f;
+    keyPressedTime = 99.0f;
+    facingRight = true;
+    grounded = true;
+    smallJump = false;
+    bigJump = true;
+    jump = false;
+    die = false;
   }
 
   /**
@@ -96,22 +114,20 @@ public class Player extends Sprite{
 
     Array<TextureRegion> keyFrames = new Array<TextureRegion>();
     for (int i = 1; i <= 16; i++) { keyFrames.add(new TextureRegion(spriteSheet.findRegion("Idle (" + i + ")"))); }
-    idleAnimation = new Animation(0.1f, keyFrames);
+    waitingAnimation = new Animation(0.1f, keyFrames);
     keyFrames.clear();
 
     for (int i = 1; i <= 20; i++) { keyFrames.add(new TextureRegion(spriteSheet.findRegion("Walk (" + i + ")"))); }
     walkingAnimation = new Animation(0.1f, keyFrames);
     keyFrames.clear();
 
+    for (int i = 1; i <= 30; i++) { keyFrames.add(new TextureRegion(spriteSheet.findRegion("Jump (" + i + ")"))); }
+    jumpingAnimation = new Animation(0.1f, keyFrames);
+    keyFrames.clear();
 
-
-    for (int i = 1; i <= 16; i++) { playerIdle.add(spriteSheet.createSprite("Idle (" + i + ")")); }
-
-    for (int i = 1; i <= 30; i++) { playerJump.add(spriteSheet.createSprite("Jump (" + i + ")")); }
-
-    for (int i = 1; i <= 20; i++) { playerRun.add(spriteSheet.createSprite("Run (" + i + ")")); }
-
-    for (int i = 1; i <= 20; i++) { playerWalk.add(spriteSheet.createSprite("Walk (" + i + ")")); }
+    for (int i = 1; i <= 20; i++) { keyFrames.add(new TextureRegion(spriteSheet.findRegion("Run (" + i + ")"))); }
+    runningAnimation = new Animation(0.1f, keyFrames);
+    keyFrames.clear();
 
     Gdx.app.log("[Player]", "animations loaded");
   }
@@ -124,31 +140,20 @@ public class Player extends Sprite{
 
     bodyDef.type = BodyDef.BodyType.DynamicBody;
 
-    bodyDef.position.set(
-        getX() / Constants.PPM,
-        getY() / Constants.PPM
-    );
-
-    System.out.println("getWidth()  :" + getWidth());
-    System.out.println("getHeight() :" + getHeight());
+    bodyDef.position.set(getX() / Constants.PPM, getY() / Constants.PPM);
 
     body = world.createBody(bodyDef);
-
     body.setFixedRotation(true);
 
     PolygonShape shape = new PolygonShape();
-
-    shape.setAsBox(
-        getWidth()/2f,
-        getHeight()/2f
-    );
+    shape.setAsBox(Constants.PLAYER_WIDTH/2, Constants.PLAYER_HEIGHT/2);
 
     FixtureDef fixtureDef = new FixtureDef();
     fixtureDef.shape = shape;
-    fixtureDef.friction = 500f;
-    fixtureDef.restitution = 1f;
-    fixtureDef.filter.categoryBits = Constants.filterPlayer;
-    fixtureDef.filter.maskBits = Constants.filterDefault;
+    fixtureDef.density = 0f;
+    fixtureDef.friction = 2f;
+    //fixtureDef.filter.categoryBits = Constants.filterPlayer;
+    //fixtureDef.filter.maskBits = Constants.filterDefault;
 
     Fixture fixture = body.createFixture(fixtureDef);
     fixture.setUserData("Player");
@@ -165,12 +170,13 @@ public class Player extends Sprite{
     stateTime += Gdx.graphics.getDeltaTime();
     TextureRegion currentFrame;
 
-    float playerX = getX()+getWidth()/2f -40f;
-    float playerY = getY()-getWidth()/2f -4f;
+    float playerX = getX();
+    float playerY = getY()-(getHeight()/2f);
 
-    currentFrame = (TextureRegion) idleAnimation.getKeyFrame(stateTime, true);
+    // default frame if not moving!
+    currentFrame = (TextureRegion) waitingAnimation.getKeyFrame(stateTime, true);
 
-    if (currentState == State.WALK) {
+    if (currentState == State.WALKING) {
       currentFrame = (TextureRegion) walkingAnimation.getKeyFrame(stateTime, true);
 
       if (currentFrame.isFlipX() && currentDirection == Direction.RIGHT) {
@@ -179,76 +185,163 @@ public class Player extends Sprite{
         currentFrame.flip(true, false);
       }
 
-    } else if (currentState == State.JUMP) {
-
+    } else if (currentState == State.JUMPING) {
+      currentFrame = (TextureRegion) jumpingAnimation.getKeyFrame(stateTime, true);
     } else {
-      currentFrame = (TextureRegion) idleAnimation.getKeyFrame(stateTime, true);
+      currentFrame = (TextureRegion) waitingAnimation.getKeyFrame(stateTime, true);
     }
     spriteBatch.draw(currentFrame, playerX, playerY);
 
   }
 
   /**
-   * Update the player, this is called to set the position of the body.
+   *
    */
-  public void updatePlayer () {
-    if (body.getLinearVelocity().x > 0) {
-      setPosition(body.getPosition().x, body.getPosition().y);
-    } else if (body.getLinearVelocity().x < 0) {
-      setPosition(body.getPosition().x,
-          body.getPosition().y);
+  public void inputHandler (float delta) {
+    float maxSpeed = normalSpeedMax;
+    float force = normalForce;
+
+    if (!isDead && !isLevelCompleted) {
+      keyPressedTime += delta;
+    }
+
+    if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+      System.out.println("X: " + getX() + " Y:" + getY() + "   " + "bodyX: " + getBody().getPosition().x + " bodyY: " + getBody().getPosition().y);
+    }
+
+    // Accelerate
+    if (Gdx.input.isKeyPressed(Constants.KEY_ACCELERATE) && grounded) {
+      maxSpeed = fastSpeedMax;
+      force = fastForce;
+    }
+
+    // Left
+    if (Gdx.input.isKeyPressed(Constants.KEY_LEFT) && body.getLinearVelocity().x > -maxSpeed) {
+      body.applyForceToCenter(new Vector2(-force, 0.0f), true);
+      currentDirection = Direction.LEFT;
+      if (body.getLinearVelocity().x > normalSpeedMax || (currentState == State.BRAKING && body.getLinearVelocity().x > 0)) {
+        brake = true;
+      }
+    }
+
+    // Right
+    if (Gdx.input.isKeyPressed(Constants.KEY_RIGHT) && body.getLinearVelocity().x < maxSpeed) {
+      body.applyForceToCenter(new Vector2(force, 0.0f), true);
+      currentDirection = Direction.RIGHT;
+      if (body.getLinearVelocity().x < -normalSpeedMax || (currentState == State.BRAKING && body.getLinearVelocity().x < 0)) {
+        brake = true;
+      }
+    }
+
+    // Jump
+    if ((Gdx.input.isKeyJustPressed(Constants.KEY_JUMP) || Gdx.input.isKeyJustPressed(Constants.ALT_JUMP)) && grounded) {
+      body.applyLinearImpulse(new Vector2(0.0f, 27.0f * 10), body.getWorldCenter(), true);
+      smallJump = true;
+      grounded = false;
+      keyPressedTime = 0;
+    }
+
+    if ((Gdx.input.isKeyPressed(Constants.KEY_JUMP) || Gdx.input.isKeyPressed(Constants.ALT_JUMP)) && currentState == State.JUMPING) {
+      if (keyPressedTime > 0.1f && keyPressedTime < 0.15f) {
+        body.applyLinearImpulse(new Vector2(0.0f, 5.0f * 10), body.getWorldCenter(), true);
+        bigJump = true;
+        keyPressedTime = 99.0f;
+      }
     }
   }
 
   /**
-   * Move the player, this is
-   * @param x x
+   * Update player this is called from the render function in GameScreen class,
+   * this should handle all states on the user until the next cycle.
+   * @param delta
    */
-  public void movePlayer (float x, float y) {
-    if (x < 0 && !this.isFlipX()) {
-      this.flip(true, false);
-    } else if (x > 0 && this.isFlipX()) {
-      this.flip(true, false);
+  public void updatePlayer(float delta) {
+    State previousState = currentState;
+
+    if (body.getPosition().y < -2.0f) {
+      die = true;
     }
-    body.setLinearVelocity(x, body.getLinearVelocity().y);
+
+    if (die) {
+      if (!isDead) {
+        currentState = State.DYING;
+        System.out.println("Player is now dead");
+      }
+    }
+    else if (!grounded) {
+      if (smallJump) {
+        currentState = State.JUMPING;
+      } else {
+        currentState = State.FALLING;
+      }
+    } else  {
+      if (currentState == State.JUMPING) {
+        smallJump = false;
+        currentState = State.IDLE;
+        // this might not be the perfect way to get user from bouncing. but it works!
+        body.applyLinearImpulse(new Vector2(0.0f, -27.0f * 10), body.getWorldCenter(), true);
+      } else if (body.getLinearVelocity().x !=0) {
+        currentState = State.WALKING;
+      } else {
+        currentState = State.IDLE;
+      }
+      if (brake) {
+        System.out.println("Braking!");
+        currentState = State.BRAKING;
+        brake = false;
+      }
+    }
+
+    switch (currentState) {
+      case WALKING:
+        break;
+      case JUMPING:
+        break;
+      case IDLE:
+        break;
+    }
+
+    // limit players movement
+    if (body.getPosition().x < 64f) { // dont move out of screen (left)
+      body.setTransform(64f, body.getPosition().y, 0);
+      body.setLinearVelocity(0, body.getLinearVelocity().y);
+    } else if (body.getPosition().y > 350f) { // dont move out of screen (top)
+      body.setTransform(body.getPosition().x, 350f, 0);
+      body.setLinearVelocity(body.getLinearVelocity().x, 0);
+    }
+
+    setPosition(body.getPosition().x - getWidth() / 2, body.getPosition().y);
   }
 
-  /**
-   * Set action for player
-   * @param value value
-   */
-  public void setCurrentState (int value) {
-    if (value == 0)
-      currentState = State.IDLE;
-    if (value == 1)
-      currentState = State.JUMP;
-    if (value == 2)
-      currentState = State.RUN;
-    if (value == 3)
-      currentState = State.WALK;
-  }
 
   /**
    * Get action for player
    * @return action
    */
-  public State getCurrentState() {
+  public Body getBody () { return  this.body; }
+
+  public void setCurrentState(State currentState) {
+    this.currentState = currentState;
+  }
+
+  public State getCurrentState () {
     return this.currentState;
   }
 
-  public Direction getCurrentDirection() { return this.currentDirection; }
-
-  public void setCurrentDirection (int value) {
-    if (value == 0)
-      currentDirection = Direction.DOWN;
-    if (value == 1)
-      currentDirection = Direction.UP;
-    if (value == 2)
-      currentDirection = Direction.LEFT;
-    if (value == 3)
-      currentDirection = Direction.RIGHT;
+  public boolean isSmallJump() {
+    return smallJump;
   }
 
-  public Body getBody () { return  this.body; }
+  public void setSmallJump(boolean smallJump) {
+    this.smallJump = smallJump;
+  }
+
+  public boolean isGrounded() {
+    return grounded;
+  }
+
+  public void setGrounded(boolean grounded) {
+    this.grounded = grounded;
+  }
 
 }
