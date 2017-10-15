@@ -30,14 +30,11 @@ import com.niklasnson.nightmare.Constants;
 
 public class WorldUtils {
 
-  public static final Vector2 gravity = new Vector2(0, Constants.GRAVITY);
-
   /**
    * Default constructor
    * @return world
    */
   public static World createWorld () {
-    return new World(gravity, true);
+    return new World(Constants.GRAVITY, true);
   }
-
 }
