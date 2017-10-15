@@ -45,6 +45,8 @@ public class Map {
   private SpriteBatch                batch;
 
   private float                      mapTileSize;
+  private float                      mapWidth;
+
   private TiledMapTileLayer          foregroundLayer;
 
 
@@ -67,6 +69,8 @@ public class Map {
     foregroundLayer = (TiledMapTileLayer) tiledMap.getLayers().get(foregroundLayerName);
 
     mapTileSize = foregroundLayer.getTileWidth();
+
+    mapWidth = ((TiledMapTileLayer) tiledMap.getLayers().get(0)).getWidth();
 
     tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, batch);
   }
@@ -112,6 +116,10 @@ public class Map {
         Constants.SCREEN_WIDTH,
         Constants.SCREEN_HEIGHT
     );
+  }
+
+  public float getMapWidth() {
+    return mapWidth;
   }
 
 }
